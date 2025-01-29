@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "245346237192",
+    "project_id": "myloc-54a88",
+    "storage_bucket": "myloc-54a88.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:245346237192:android:118a563d8414b50c348abd",
+        "android_client_info": {
+          "package_name": "com.example.myloc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAx4Eb80BJSB7bv1ByO9Q_HXjBIQVKA_XE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
