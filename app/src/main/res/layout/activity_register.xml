@@ -1,10 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_login"
+    android:orientation="vertical"
     tools:context=".RegisterActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
+
+    <TextView
+        android:id="@+id/signup_info_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/vladivostok_bold"
+        android:text="SIGN UP"
+        android:textColor="@color/white"
+        android:textSize="128px" />
+
+    <ImageView
+        android:id="@+id/icon_app_login"
+        android:layout_width="600px"
+        android:layout_height="615px"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/pathfinder_logo_light" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="13dp" />
+
+    <EditText
+        android:id="@+id/username_reg_et"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/white"
+        android:ems="10"
+        android:fontFamily="@font/vladivostok_bold"
+        android:hint="Username"
+        android:inputType="text"
+        android:singleLine="true"
+        android:textAlignment="viewStart"
+        android:textColor="#BDB0D8"
+        android:textColorHint="#BDB0D8"
+        android:textSize="64px" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="19dp" />
+
+    <EditText
+        android:id="@+id/password_reg_et"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/white"
+        android:ems="10"
+        android:fontFamily="@font/vladivostok_bold"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:textAlignment="viewStart"
+        android:textColor="#BDB0D8"
+        android:textColorHint="#BDB0D8"
+        android:textSize="64px" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="19dp" />
+
+    <EditText
+        android:id="@+id/rpassword_reg_et"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/white"
+        android:ems="10"
+        android:fontFamily="@font/vladivostok_bold"
+        android:hint="Repeat password"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:textAlignment="viewStart"
+        android:textColor="#BDB0D8"
+        android:textColorHint="#BDB0D8"
+        android:textSize="64px" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="19dp" />
+
+    <EditText
+        android:id="@+id/email_reg_et"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/white"
+        android:ems="10"
+        android:fontFamily="@font/vladivostok_bold"
+        android:hint="E-mail"
+        android:inputType="textEmailAddress"
+        android:singleLine="true"
+        android:textAlignment="viewStart"
+        android:textColor="#BDB0D8"
+        android:textColorHint="#BDB0D8"
+        android:textSize="64px" />
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="306dp"
+        android:layout_height="33dp"
+        android:layout_gravity="center"
+        android:buttonTint="#AA7FFF"
+        android:fontFamily="@font/vladivostok_regular"
+        android:text="Term Of Service"
+        android:textColor="#AA80FF"
+        android:textSize="36px" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="52dp" />
+
+    <Button
+        android:id="@+id/reg_btn"
+        android:layout_width="627px"
+        android:layout_height="173px"
+        android:layout_gravity="center"
+        android:backgroundTint="#FFFFFF"
+        android:fontFamily="@font/vladivostok_bold"
+        android:text="Continue"
+        android:textColor="@color/black"
+        android:textSize="64px" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="14dp" />
+
+    <TextView
+        android:id="@+id/login_link_act"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/vladivostok_regular"
+        android:text="Already have an account? Login here"
+        android:textColor="#AA80FF"
+        android:textSize="36px" />
+
+</LinearLayout>
