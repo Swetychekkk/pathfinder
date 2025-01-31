@@ -45,7 +45,7 @@
         android:inputType="textEmailAddress"
         android:singleLine="true"
         android:textAlignment="viewStart"
-        android:textColor="#BDB0D8"
+        android:textColor="#E0DAEDFF"
         android:textColorHint="#BDB0D8"
         android:textSize="64px" />
 
@@ -65,7 +65,7 @@
         android:inputType="textPassword"
         android:singleLine="true"
         android:textAlignment="viewStart"
-        android:textColor="#BDB0D8"
+        android:textColor="#E0DAEDFF"
         android:textColorHint="#BDB0D8"
         android:textSize="64px" />
 

@@ -46,6 +46,8 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Some of important filds cannot be empty", Toast.LENGTH_SHORT).show();
                 } else if (!(binding.rpasswordRegEt.getText().toString().equals(binding.passwordRegEt.getText().toString()))) {
                     Toast.makeText(getApplicationContext(), "Repeat password compare error", Toast.LENGTH_SHORT).show();
+                } else if (!(binding.passwordRegEt.getText().toString().length() >= 6)) {
+                    Toast.makeText(getApplicationContext(), "Password must be at least 6 symbol", Toast.LENGTH_SHORT).show();
                 } else {
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(binding.emailRegEt.getText().toString(), binding.passwordRegEt.getText().toString())
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
