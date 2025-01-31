@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "245346237192",
-    "project_id": "myloc-54a88",
-    "storage_bucket": "myloc-54a88.firebasestorage.app"
+    "project_number": "966585782255",
+    "project_id": "pathfinder-70313",
+    "storage_bucket": "pathfinder-70313.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:245346237192:android:118a563d8414b50c348abd",
+        "mobilesdk_app_id": "1:966585782255:android:c3c9013e2ddea5dc7b701a",
         "android_client_info": {
-          "package_name": "com.example.myloc"
+          "package_name": "com.example.pathfinder"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAx4Eb80BJSB7bv1ByO9Q_HXjBIQVKA_XE"
+          "current_key": "AIzaSyDVMeNLCjvXIV_o8j7LoAF2iwBAl7a62kM"
         }
       ],
       "services": {
