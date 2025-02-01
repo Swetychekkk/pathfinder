@@ -7,20 +7,20 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient_login"
     android:orientation="vertical"
-    tools:context=".LoginActivity">
+    tools:context=".ResetLinkActivity">
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="29dp" />
 
     <TextView
-        android:id="@+id/login_info_text"
+        android:id="@+id/reset_info_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/vladivostok_bold"
-        android:text="LOGIN"
+        android:text="RESET PASSWORD"
         android:textColor="@color/white"
-        android:textSize="128px" />
+        android:textSize="122px" />
 
     <ImageView
         android:id="@+id/icon_app_login"
@@ -31,10 +31,10 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="46dp" />
+        android:layout_height="32dp" />
 
     <EditText
-        android:id="@+id/email_et"
+        android:id="@+id/email_reset_et"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -49,64 +49,20 @@
         android:textColorHint="#BDB0D8"
         android:textSize="64px" />
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="19dp" />
-
-    <EditText
-        android:id="@+id/password_et"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:backgroundTint="@color/white"
-        android:ems="10"
-        android:fontFamily="@font/vladivostok_bold"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:singleLine="true"
-        android:textAlignment="viewStart"
-        android:textColor="#E0DAEDFF"
-        android:textColorHint="#BDB0D8"
-        android:textSize="64px" />
-
-    <TextView
-        android:id="@+id/forgot_pass_act"
-        android:layout_width="293dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:clickable="true"
-        android:fontFamily="@font/vladivostok_regular"
-        android:text="Forgot password?"
-        android:textColor="#AA80FF" />
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="123dp" />
+        android:layout_height="211dp" />
 
     <Button
-        android:id="@+id/login_btn"
+        android:id="@+id/send_link"
         android:layout_width="627px"
         android:layout_height="173px"
         android:layout_gravity="center"
         android:backgroundTint="#FFFFFF"
         android:fontFamily="@font/vladivostok_bold"
-        android:text="Continue"
+        android:text="Send reset link"
         android:textColor="@color/black"
         android:textSize="64px" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="14dp" />
-
-    <TextView
-        android:id="@+id/register_act"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:clickable="true"
-        android:fontFamily="@font/vladivostok_regular"
-        android:text="New here? Register now"
-        android:textColor="#AA80FF"
-        android:textSize="36px" />
 
 </LinearLayout>
