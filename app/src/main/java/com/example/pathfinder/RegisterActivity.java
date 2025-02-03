@@ -1,6 +1,8 @@
 package com.example.pathfinder;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -17,6 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
@@ -41,14 +44,21 @@ public class RegisterActivity extends AppCompatActivity {
         binding.regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (binding.emailRegEt.getText().toString().isEmpty() || binding.passwordRegEt.getText().toString().isEmpty()
+                if (binding.emailRegEt.getText().toString().isEmpty() || binding.passwordRegEt.getText().toString().isEmpty() //check if fields not null
                         || binding.rpasswordRegEt.getText().toString().isEmpty() || binding.usernameRegEt.getText().toString().isEmpty()){
                     Toast.makeText(getApplicationContext(), "Some of important filds cannot be empty", Toast.LENGTH_SHORT).show();
-                } else if (!(binding.rpasswordRegEt.getText().toString().equals(binding.passwordRegEt.getText().toString()))) {
+                    binding.usernameRegEt.setHintTextColor(Color.parseColor("#ce3867"));
+                    binding.passwordRegEt.setHintTextColor(Color.parseColor("#ce3867"));
+                    binding.rpasswordRegEt.setHintTextColor(Color.parseColor("#ce3867"));
+                    binding.emailRegEt.setHintTextColor(Color.parseColor("#ce3867"));
+                } else if (!(binding.rpasswordRegEt.getText().toString().equals(binding.passwordRegEt.getText().toString()))) { //if password repeated not correctly
                     Toast.makeText(getApplicationContext(), "Repeat password compare error", Toast.LENGTH_SHORT).show();
-                } else if (!(binding.passwordRegEt.getText().toString().length() >= 6)) {
+                    binding.passwordRegEt.setTextColor(Color.parseColor("#ce3867"));
+                    binding.rpasswordRegEt.setTextColor(Color.parseColor("#ce3867"));
+                } else if (!(binding.passwordRegEt.getText().toString().length() >= 6)) { //if password not satisfied FireBase security requirements
                     Toast.makeText(getApplicationContext(), "Password must be at least 6 symbol", Toast.LENGTH_SHORT).show();
-                } else {
+                    binding.passwordRegEt.setTextColor(Color.parseColor("#ce3867"));
+                } else if (binding.checkBox.isChecked()) { //check if checkbox active
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(binding.emailRegEt.getText().toString(), binding.passwordRegEt.getText().toString())
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -60,9 +70,16 @@ public class RegisterActivity extends AppCompatActivity {
                                         FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                 .setValue(userInfo);
                                         startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                                    } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                        Toast.makeText(getApplicationContext(), "User with this E-mail already exists", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
+                } else { //if checkbox not active
+                    binding.checkBox.setTextColor(Color.parseColor("#ce3867"));
+                    binding.passwordRegEt.setTextColor(Color.parseColor("#BDB0D8"));
+                    binding.rpasswordRegEt.setTextColor(Color.parseColor("#BDB0D8"));
+                    Toast.makeText(getApplicationContext(), "Agree our Term of Service", Toast.LENGTH_SHORT).show();
                 }
             }
         });
