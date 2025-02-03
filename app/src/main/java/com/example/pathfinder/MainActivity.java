@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.PointF;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -27,9 +28,13 @@ import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.map.IconStyle;
+import com.yandex.mapkit.map.MapType;
 import com.yandex.mapkit.map.TextStyle;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.runtime.image.ImageProvider;
+import com.yandex.runtime.ui_view.ViewProvider;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     private static boolean isMapKitInit = false;
@@ -99,7 +104,11 @@ public class MainActivity extends AppCompatActivity {
                                 Location location = task.getResult();
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
-                                mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 30.0f));
+                                mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
+                                mapView.getMap().set2DMode(true);
+                                if (Calendar.getInstance().get(Calendar.HOUR) >= 8) {
+                                    mapView.getMap().setNightModeEnabled(true);
+                                }
                                 var placemark = mapView.getMap().getMapObjects().addPlacemark();
                                 placemark.setGeometry(new Point(latitude, longitude));
                                 placemark.setIcon(ImageProvider.fromResource(MainActivity.this, R.drawable.pin));
