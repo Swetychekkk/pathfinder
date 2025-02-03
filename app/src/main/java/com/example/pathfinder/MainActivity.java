@@ -3,6 +3,8 @@ package com.example.pathfinder;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PointF;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -24,7 +26,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.CameraPosition;
+import com.yandex.mapkit.map.IconStyle;
+import com.yandex.mapkit.map.TextStyle;
 import com.yandex.mapkit.mapview.MapView;
+import com.yandex.runtime.image.ImageProvider;
 
 public class MainActivity extends AppCompatActivity {
     private static boolean isMapKitInit = false;
@@ -95,9 +100,18 @@ public class MainActivity extends AppCompatActivity {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
                                 mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 30.0f));
+                                var placemark = mapView.getMap().getMapObjects().addPlacemark();
+                                placemark.setGeometry(new Point(latitude, longitude));
+                                placemark.setIcon(ImageProvider.fromResource(MainActivity.this, R.drawable.pin));
+                                placemark.setIconStyle(
+                                        new IconStyle()
+                                                .setScale(0.6f)
+                                                .setAnchor(new PointF(0.5f, 1.0f))
+                                                .setFlat(true)
+                                                );
                                 // Используйте полученные координаты по необходимости
                             } else {
-                                // Обработка случая, когда местоположение недоступно
+                                //ex
                             }
                         }
                     });
