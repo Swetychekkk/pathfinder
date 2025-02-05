@@ -11,7 +11,20 @@
     <com.yandex.mapkit.mapview.MapView
         android:id="@+id/mapview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/button_find_me"
+            android:layout_width="120px"
+            android:layout_height="120px"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginTop="24px"
+            android:layout_marginRight="24px"
+            android:background="#00FFFFFF"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/findmebtn" />
+    </com.yandex.mapkit.mapview.MapView>
 
 
 </LinearLayout>

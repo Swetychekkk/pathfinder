@@ -39,7 +39,7 @@ public class ResetLinkActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (binding.emailResetEt.getText().toString().isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Some of important filds cannot be empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Some of important fields cannot be empty", Toast.LENGTH_SHORT).show();
                 } else {
                     FirebaseAuth.getInstance().sendPasswordResetEmail(binding.emailResetEt.getText().toString())
                             .addOnCompleteListener(new OnCompleteListener<Void>() {

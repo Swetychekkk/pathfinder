@@ -8,6 +8,7 @@ import android.graphics.PointF;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,6 +20,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.pathfinder.databinding.ActivityMainBinding;
+import com.example.pathfinder.databinding.ActivityResetLinkBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,27 +40,37 @@ import com.yandex.runtime.ui_view.ViewProvider;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
-    private static boolean isMapKitInit = false;
+    private static boolean isMapKitInit = false;    //TOGGLE MAPKIT INITIALISATION
 
     private FusedLocationProviderClient fusedLocationClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
+    //GLOBAL COORDINATES VALUES
     private double longitude = 0.0;
-    private double latitude =0.0;
+    private double latitude = 0.0;
     private MapView mapView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //REDIRECT USER TO AUTH SCREEN IF NOT AUTHORISED
+        if (FirebaseAuth.getInstance().getCurrentUser()==null){
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        }
+
+        //Yandex MapKitSDK Initialisation
         if (!isMapKitInit) {
             MapKitFactory.setApiKey("00f001ab-bb4f-423d-9a55-c527e58d412d");
             MapKitFactory.initialize(this);
             isMapKitInit = true;
         }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        //CHECK PERMISSIONS
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -67,21 +80,22 @@ public class MainActivity extends AppCompatActivity {
             getLastKnownLocation();
         }
 
-
-
-
-
         mapView = findViewById(R.id.mapview);
-        mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 30.0f));
+        mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        if (FirebaseAuth.getInstance().getCurrentUser()==null){
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        }
+        //SET MAP POSITION TO USER (ON "Find ME" BUTTON CLICK)
+        View btn = findViewById(R.id.button_find_me);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
+            }
+        });
     }
     public void onStart() {
         super.onStart();
@@ -105,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
                                 mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
-                                mapView.getMap().set2DMode(true);
-                                if (Calendar.getInstance().get(Calendar.HOUR) >= 8) {
+//                                mapView.getMap().set2DMode(true);
+                                if (8 >= Calendar.getInstance().get(Calendar.HOUR_OF_DAY) || Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 20) {
                                     mapView.getMap().setNightModeEnabled(true);
                                 }
                                 var placemark = mapView.getMap().getMapObjects().addPlacemark();
