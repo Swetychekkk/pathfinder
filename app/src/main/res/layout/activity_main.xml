@@ -15,8 +15,8 @@
 
         <ImageButton
             android:id="@+id/button_find_me"
-            android:layout_width="120px"
-            android:layout_height="120px"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="false"
             android:layout_marginTop="24px"
@@ -24,6 +24,58 @@
             android:background="#00FFFFFF"
             android:scaleType="fitXY"
             app:srcCompat="@drawable/findmebtn" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30px">
+
+            <ImageButton
+                android:id="@+id/button_search"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="20dp"
+                android:background="#00FFFFFF"
+                android:backgroundTint="#00FFFFFF"
+                android:elevation="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ico_search" />
+
+            <ImageButton
+                android:id="@+id/button_add"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="#00FFFFFF"
+                android:backgroundTint="#00FFFFFF"
+                android:elevation="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ico_add" />
+
+            <ImageButton
+                android:id="@+id/button_profile"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="20dp"
+                android:background="#00FFFFFF"
+                android:backgroundTint="#00FFFFFF"
+                android:elevation="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/placeholder_account" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="380dp"
+                android:layout_height="80dp"
+                android:background="@drawable/rounded_element"
+                android:backgroundTint="#25193F" />
+
+        </FrameLayout>
+
     </com.yandex.mapkit.mapview.MapView>
 
 
