@@ -67,9 +67,11 @@ public class RegisterActivity extends AppCompatActivity {
                                         HashMap<String, String> userInfo = new HashMap<>();
                                         userInfo.put("email", binding.emailRegEt.getText().toString());
                                         userInfo.put("username", binding.usernameRegEt.getText().toString());
+                                        userInfo.put("thumbnail", "");
                                         FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                 .setValue(userInfo);
                                         startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                                        finish();
                                     } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                                         Toast.makeText(getApplicationContext(), "User with this E-mail already exists", Toast.LENGTH_SHORT).show();
                                     }
@@ -81,6 +83,14 @@ public class RegisterActivity extends AppCompatActivity {
                     binding.rpasswordRegEt.setTextColor(Color.parseColor("#BDB0D8"));
                     Toast.makeText(getApplicationContext(), "Agree our Term of Service", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        binding.loginLinkAct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                finish();
             }
         });
     }

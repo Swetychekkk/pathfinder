@@ -10,8 +10,16 @@
     tools:context=".ProfileActivity" >
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_view"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/placeholder_account"/>
+
+    <TextView
+        android:id="@+id/username_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="#F8F8F8" />
 
 </LinearLayout>

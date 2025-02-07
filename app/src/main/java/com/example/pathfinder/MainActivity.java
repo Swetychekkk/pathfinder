@@ -1,6 +1,7 @@
 package com.example.pathfinder;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -46,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     //GLOBAL COORDINATES VALUES
-    private double longitude = 0.0;
-    private double latitude = 0.0;
+    private double longitude = 36.215984f;
+    private double latitude = 51.740429f;
     private MapView mapView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         //REDIRECT USER TO AUTH SCREEN IF NOT AUTHORISED
         if (FirebaseAuth.getInstance().getCurrentUser()==null){
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
         }
 
         //Yandex MapKitSDK Initialisation
@@ -80,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             getLastKnownLocation();
         }
 
-        mapView = findViewById(R.id.mapview);
+        mapView = findViewById(R.id.mapview); //MAPVIEW
         mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -94,6 +96,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
+            }
+        });
+        View btn_profile = findViewById(R.id.button_profile);
+        btn_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
             }
         });
     }
