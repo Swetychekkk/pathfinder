@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -24,11 +25,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.CameraPosition;
@@ -62,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         }
+        UserInfoFetch();
 
         //Yandex MapKitSDK Initialisation
         if (!isMapKitInit) {
@@ -156,6 +163,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 isBulderModEnabled = !isBulderModEnabled;
+                if (isBulderModEnabled) {
+                    builderModToggle.setRotation(45);
+                } else {
+                    builderModToggle.setRotation(0);
+                }
             }
         });
     }
@@ -171,6 +183,28 @@ public class MainActivity extends AppCompatActivity {
         MapKitFactory.getInstance().onStop();
         super.onStop();
     }
+
+    private void UserInfoFetch(){
+        FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String profileImage = snapshot.child("thumbnail").getValue().toString();
+
+                        de.hdodenhof.circleimageview.CircleImageView profileThumbnail = findViewById(R.id.button_profile);
+
+                        if (!profileImage.isEmpty()) {
+                            Glide.with(MainActivity.this).load(profileImage).into(profileThumbnail);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+
     private void getLastKnownLocation() {
         try {
             fusedLocationClient.getLastLocation()

@@ -2,7 +2,12 @@ package com.example.pathfinder;
 
 import static java.security.AccessController.getContext;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -36,26 +41,32 @@ public class ProfileActivity extends AppCompatActivity {
             return insets;
         });
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
+        UserInfoFetch();
     }
-//    private void UserInfoFetch(){
-//        FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-////                        String username = snapshot.child("username").getValue().toString();
-////                        String profileImage = snapshot.child("thumbnail").getValue().toString();
-//
-//                        binding.usernameProfile.setText("username");
-//
-////                        if (!profileImage.isEmpty()) {
-////                            Glide.with(ProfileActivity.this).load(profileImage).into(binding.profileView);
-////                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                });
-//    }
+    private void UserInfoFetch(){
+        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
+        FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
+                        String username = snapshot.child("username").getValue().toString();
+                        String profileImage = snapshot.child("thumbnail").getValue().toString();
+
+                        TextView usernameTextView = findViewById(R.id.username_profile);
+                        usernameTextView.setText(username);
+
+                        de.hdodenhof.circleimageview.CircleImageView profileThumbnail = findViewById(R.id.profile_view);
+
+                        if (!profileImage.isEmpty()) {
+                            Glide.with(ProfileActivity.this).load(profileImage).into(profileThumbnail);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
 }
