@@ -37,25 +37,25 @@ public class ProfileActivity extends AppCompatActivity {
         });
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
     }
-    private void UserInfoFetch(){
-        FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        String username = snapshot.child("username").getValue().toString();
-                        String profileImage = snapshot.child("thumbnail").getValue().toString();
-
-                        binding.usernameProfile.setText(username);
-
-                        if (!profileImage.isEmpty()) {
-                            Glide.with(ProfileActivity.this).load(profileImage).into(binding.profileView);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-    }
+//    private void UserInfoFetch(){
+//        FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+////                        String username = snapshot.child("username").getValue().toString();
+////                        String profileImage = snapshot.child("thumbnail").getValue().toString();
+//
+//                        binding.usernameProfile.setText("username");
+//
+////                        if (!profileImage.isEmpty()) {
+////                            Glide.with(ProfileActivity.this).load(profileImage).into(binding.profileView);
+////                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                });
+//    }
 }

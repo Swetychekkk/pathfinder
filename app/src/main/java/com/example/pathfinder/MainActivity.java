@@ -1,19 +1,22 @@
 package com.example.pathfinder;
 
 import android.Manifest;
-import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.PointF;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -21,8 +24,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.pathfinder.databinding.ActivityMainBinding;
-import com.example.pathfinder.databinding.ActivityResetLinkBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,17 +32,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.CameraPosition;
+import com.yandex.mapkit.map.CompositeIcon;
 import com.yandex.mapkit.map.IconStyle;
-import com.yandex.mapkit.map.MapType;
-import com.yandex.mapkit.map.TextStyle;
+import com.yandex.mapkit.map.InputListener;
+import com.yandex.mapkit.map.Map;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.runtime.image.ImageProvider;
-import com.yandex.runtime.ui_view.ViewProvider;
 
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     private static boolean isMapKitInit = false;    //TOGGLE MAPKIT INITIALISATION
+
+    private static boolean isBulderModEnabled = false;
 
     private FusedLocationProviderClient fusedLocationClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -105,7 +108,58 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ProfileActivity.class));
             }
         });
+
+
+        InputListener inputListener = new InputListener() {
+            @Override
+            public void onMapTap(@NonNull Map map, @NonNull Point point) {
+                if (isBulderModEnabled) {
+                    View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.user_input, null);
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
+                    alertBuilder.setView(view);
+                    final EditText userInput = (EditText) view.findViewById(R.id.userinput);
+
+                    alertBuilder.setCancelable(true)
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    var placemark = mapView.getMap().getMapObjects().addPlacemark();
+                                    placemark.setGeometry(point);
+//                                    placemark.setText(userInput.getText().toString());
+//                                    placemark.useCompositeIcon();
+                                    CompositeIcon compositeIcon = placemark.useCompositeIcon();
+                                    compositeIcon.setIcon("pin_upper", ImageProvider.fromResource(MainActivity.this, R.drawable.pin), new IconStyle()
+                                            .setScale(0.4f)
+                                            .setAnchor(new PointF(0.50f, 0.9f)));
+                                    compositeIcon.setIcon("point", ImageProvider.fromResource(MainActivity.this, R.drawable.point), new IconStyle()
+                                            .setScale(0.4f)
+                                            .setFlat(true)
+                                            .setAnchor(new PointF(0.5f, 0.5f)));
+                                    Toast.makeText(getApplicationContext(), userInput.getText().toString(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    Dialog dialog = alertBuilder.create();
+                    dialog.show();
+                }
+            }
+
+            @Override
+            public void onMapLongTap(@NonNull Map map, @NonNull Point point) {
+
+            }
+        };
+
+        mapView.getMap().addInputListener(inputListener);
+
+        ImageButton builderModToggle = (ImageButton) findViewById(R.id.button_add);
+        builderModToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isBulderModEnabled = !isBulderModEnabled;
+            }
+        });
     }
+
     public void onStart() {
         super.onStart();
         MapKitFactory.getInstance().onStart();
@@ -134,10 +188,10 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 var placemark = mapView.getMap().getMapObjects().addPlacemark();
                                 placemark.setGeometry(new Point(latitude, longitude));
-                                placemark.setIcon(ImageProvider.fromResource(MainActivity.this, R.drawable.pin));
+                                placemark.setIcon(ImageProvider.fromResource(MainActivity.this, R.drawable.point));
                                 placemark.setIconStyle(
                                         new IconStyle()
-                                                .setScale(0.6f)
+                                                .setScale(0.5f)
                                                 .setAnchor(new PointF(0.5f, 1.0f))
                                                 .setFlat(true)
                                                 );
