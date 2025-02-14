@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.location.Location;
 import android.os.Bundle;
@@ -47,8 +48,11 @@ import com.yandex.mapkit.map.CompositeIcon;
 import com.yandex.mapkit.map.IconStyle;
 import com.yandex.mapkit.map.InputListener;
 import com.yandex.mapkit.map.Map;
+import com.yandex.mapkit.map.MapObject;
 import com.yandex.mapkit.map.MapObjectCollection;
+import com.yandex.mapkit.map.MapObjectTapListener;
 import com.yandex.mapkit.map.PlacemarkMapObject;
+import com.yandex.mapkit.map.TextStyle;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.runtime.image.ImageProvider;
 
@@ -109,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude);
 
         //SET MAP POSITION TO USER (ON "Find ME" BUTTON CLICK)
         View btn = findViewById(R.id.button_find_me);
@@ -233,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
                                                 .setAnchor(new PointF(0.5f, 1.0f))
                                                 .setFlat(true)
                                                 );
+                                Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude);
                                 // Используйте полученные координаты по необходимости
                             } else {
                                 //ex
@@ -268,7 +272,11 @@ class Markers {
                 .setScale(0.4f)
                 .setFlat(true)
                 .setAnchor(new PointF(0.5f, 0.5f)));
-        placemark.setText(name);
+        placemark.setText(name, new TextStyle()
+                .setColor(Color.WHITE)
+                .setOutlineColor(Color.parseColor("#3D1C80"))
+                .setOutlineWidth(3)
+        );
     }
     public static void Push(String name, String description, String ownerid, double lat, double lng) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -309,6 +317,13 @@ class Markers {
                         String name = document.getString("name");
                         PlacemarkMapObject placemark = mapView.getMap().getMapObjects().addPlacemark(new Point(latitude, longitude));
                         decorate(MainActivity, placemark, name, 1);
+                        placemark.addTapListener(new MapObjectTapListener() {
+                            @Override
+                            public boolean onMapObjectTap(@NonNull MapObject mapObject, @NonNull Point point) {
+                                Toast.makeText(context, "Password must be at least 6 symbol", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
+                        });
                     }
                 })
                 .addOnFailureListener(e -> Log.w("Firestore", "Ошибка получения данных", e));
