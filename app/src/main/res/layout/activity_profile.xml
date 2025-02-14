@@ -9,17 +9,59 @@
     android:background="@drawable/gradient_profile"
     tools:context=".ProfileActivity" >
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_view"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/placeholder_account"/>
-
-    <TextView
-        android:id="@+id/username_profile"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textColor="#FFFFFF" />
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="10dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:background="@drawable/rounded_element"
+            android:backgroundTint="#6C3FC5" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_view"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/placeholder_account" />
+
+        <TextView
+            android:id="@+id/username_profile"
+            android:layout_width="238dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="3dp"
+            android:fontFamily="@font/vladivostok_bold"
+            android:text="USERNAME"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/joindate_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="50dp"
+            android:fontFamily="@font/vladivostok_regular"
+            android:text="Member since 3 Jan 2023"
+            android:textColor="#C7C7C7"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="65dp"
+            android:fontFamily="@font/vladivostok_bold"
+            android:text="Moskow, Russian Federation"
+            android:textColor="#FFFFFF" />
+
+    </FrameLayout>
 
 </LinearLayout>

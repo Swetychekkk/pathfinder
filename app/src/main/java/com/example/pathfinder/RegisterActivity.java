@@ -22,7 +22,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -65,9 +68,11 @@ public class RegisterActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         HashMap<String, String> userInfo = new HashMap<>();
+                                        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
                                         userInfo.put("email", binding.emailRegEt.getText().toString());
                                         userInfo.put("username", binding.usernameRegEt.getText().toString());
                                         userInfo.put("thumbnail", "");
+                                        userInfo.put("joindate", sdf.format(new Date()));
                                         FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                 .setValue(userInfo);
                                         startActivity(new Intent(RegisterActivity.this, MainActivity.class));

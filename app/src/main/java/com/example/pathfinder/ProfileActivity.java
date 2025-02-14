@@ -26,6 +26,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class ProfileActivity extends AppCompatActivity {
 
     private ActivityProfileBinding binding;
@@ -44,17 +48,18 @@ public class ProfileActivity extends AppCompatActivity {
         UserInfoFetch();
     }
     private void UserInfoFetch(){
-        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
         FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
                         String username = snapshot.child("username").getValue().toString();
                         String profileImage = snapshot.child("thumbnail").getValue().toString();
+                        String joindate = snapshot.child("joindate").getValue().toString();
 
                         TextView usernameTextView = findViewById(R.id.username_profile);
+                        TextView joindateTextView = findViewById(R.id.joindate_textview);
                         usernameTextView.setText(username);
+                        joindateTextView.setText("Member since " + joindate);
 
                         de.hdodenhof.circleimageview.CircleImageView profileThumbnail = findViewById(R.id.profile_view);
 

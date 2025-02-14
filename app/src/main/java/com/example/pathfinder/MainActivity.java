@@ -1,7 +1,9 @@
 package com.example.pathfinder;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -35,6 +37,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.CameraPosition;
@@ -42,15 +47,20 @@ import com.yandex.mapkit.map.CompositeIcon;
 import com.yandex.mapkit.map.IconStyle;
 import com.yandex.mapkit.map.InputListener;
 import com.yandex.mapkit.map.Map;
+import com.yandex.mapkit.map.MapObjectCollection;
+import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.runtime.image.ImageProvider;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import android.util.Log;
+
 
 public class MainActivity extends AppCompatActivity {
     private static boolean isMapKitInit = false;    //TOGGLE MAPKIT INITIALISATION
 
-    private static boolean isBulderModEnabled = false;
+    private static boolean isBuilderModEnabled = false;
 
     private FusedLocationProviderClient fusedLocationClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -99,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude);
 
         //SET MAP POSITION TO USER (ON "Find ME" BUTTON CLICK)
         View btn = findViewById(R.id.button_find_me);
@@ -120,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         InputListener inputListener = new InputListener() {
             @Override
             public void onMapTap(@NonNull Map map, @NonNull Point point) {
-                if (isBulderModEnabled) {
+                if (isBuilderModEnabled) {
                     View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.user_input, null);
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
                     alertBuilder.setView(view);
@@ -132,17 +143,10 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     var placemark = mapView.getMap().getMapObjects().addPlacemark();
                                     placemark.setGeometry(point);
-//                                    placemark.setText(userInput.getText().toString());
-//                                    placemark.useCompositeIcon();
-                                    CompositeIcon compositeIcon = placemark.useCompositeIcon();
-                                    compositeIcon.setIcon("pin_upper", ImageProvider.fromResource(MainActivity.this, R.drawable.pin), new IconStyle()
-                                            .setScale(0.4f)
-                                            .setAnchor(new PointF(0.50f, 0.9f)));
-                                    compositeIcon.setIcon("point", ImageProvider.fromResource(MainActivity.this, R.drawable.point), new IconStyle()
-                                            .setScale(0.4f)
-                                            .setFlat(true)
-                                            .setAnchor(new PointF(0.5f, 0.5f)));
-                                    Toast.makeText(getApplicationContext(), userInput.getText().toString(), Toast.LENGTH_SHORT).show();
+
+                                    Markers.decorate(MainActivity.this, placemark, userInput.getText().toString(), 1);
+
+                                    Markers.Push(userInput.getText().toString(),"Lorem ipsum", FirebaseAuth.getInstance().getCurrentUser().getUid(), point.getLatitude(), point.getLongitude());
                                 }
                             });
                     Dialog dialog = alertBuilder.create();
@@ -162,8 +166,8 @@ public class MainActivity extends AppCompatActivity {
         builderModToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isBulderModEnabled = !isBulderModEnabled;
-                if (isBulderModEnabled) {
+                isBuilderModEnabled = !isBuilderModEnabled;
+                if (isBuilderModEnabled) {
                     builderModToggle.setRotation(45);
                 } else {
                     builderModToggle.setRotation(0);
@@ -251,5 +255,62 @@ public class MainActivity extends AppCompatActivity {
                 // Разрешение не предоставлено, обработайте этот случай
             }
         }
+    }
+}
+
+class Markers {
+    public static void decorate(Activity MainActivity, PlacemarkMapObject placemark, String name, Integer priority) {
+        CompositeIcon compositeIcon = placemark.useCompositeIcon();
+        compositeIcon.setIcon("pin_upper", ImageProvider.fromResource(MainActivity, R.drawable.pin), new IconStyle()
+                .setScale(0.4f)
+                .setAnchor(new PointF(0.50f, 0.9f)));
+        compositeIcon.setIcon("point", ImageProvider.fromResource(MainActivity, R.drawable.point), new IconStyle()
+                .setScale(0.4f)
+                .setFlat(true)
+                .setAnchor(new PointF(0.5f, 0.5f)));
+        placemark.setText(name);
+    }
+    public static void Push(String name, String description, String ownerid, double lat, double lng) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        HashMap<String, Object> marker = new HashMap<>();
+        marker.put("name", name);
+        marker.put("description", description);
+        marker.put("ownerid", ownerid);
+        marker.put("latitude", lat);
+        marker.put("longitude", lng);
+
+        db.collection("markers")
+                .add(marker)
+                .addOnSuccessListener(documentReference -> Log.d("Firestore", "Метка добавлена: " + documentReference.getId()))
+                .addOnFailureListener(e -> Log.e("Firestore", "Ошибка добавления", e));
+    }
+    public static void load(Activity MainActivity, MapView mapView, Context context, Double userLat, Double userLon) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        double delta = 0.4f;
+        double minLat = userLat - delta;
+        double maxLat = userLat + delta;
+        double minLon = userLon - delta;
+        double maxLon = userLon + delta;
+
+        db.collection("markers")
+                .whereGreaterThanOrEqualTo("latitude", minLat)
+                .whereLessThanOrEqualTo("latitude", maxLat)
+                .whereGreaterThanOrEqualTo("longitude", minLon)
+                .whereLessThanOrEqualTo("longitude", maxLon)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
+                        Log.d("Firestore", "Данные получены: " + queryDocumentSnapshots.size());
+
+                        double latitude = document.getDouble("latitude");
+                        double longitude = document.getDouble("longitude");
+                        String name = document.getString("name");
+                        PlacemarkMapObject placemark = mapView.getMap().getMapObjects().addPlacemark(new Point(latitude, longitude));
+                        decorate(MainActivity, placemark, name, 1);
+                    }
+                })
+                .addOnFailureListener(e -> Log.w("Firestore", "Ошибка получения данных", e));
     }
 }
