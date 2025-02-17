@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -60,6 +61,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import android.util.Log;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
     private static boolean isMapKitInit = false;    //TOGGLE MAPKIT INITIALISATION
@@ -139,17 +141,17 @@ public class MainActivity extends AppCompatActivity {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
                     alertBuilder.setView(view);
                     final EditText userInput = (EditText) view.findViewById(R.id.userinput);
+                    final EditText desc = (EditText) view.findViewById(R.id.descriptioninput);
 
                     alertBuilder.setCancelable(true)
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("Add point", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    var placemark = mapView.getMap().getMapObjects().addPlacemark();
-                                    placemark.setGeometry(point);
-
-                                    Markers.decorate(MainActivity.this, placemark, userInput.getText().toString(), 1);
-
-                                    Markers.Push(userInput.getText().toString(),"Lorem ipsum", FirebaseAuth.getInstance().getCurrentUser().getUid(), point.getLatitude(), point.getLongitude());
+                                    if (!(userInput.getText().toString().isEmpty()) && !(desc.getText().toString().isEmpty())) {
+                                        Markers.Push(userInput.getText().toString(),desc.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getUid(), point.getLatitude(), point.getLongitude());
+                                        map.getMapObjects().clear();
+                                        getLastKnownLocation();
+                                        Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude); }
                                 }
                             });
                     Dialog dialog = alertBuilder.create();
@@ -224,9 +226,9 @@ public class MainActivity extends AppCompatActivity {
                                 longitude = location.getLongitude();
                                 mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
 //                                mapView.getMap().set2DMode(true);
-                                if (8 >= Calendar.getInstance().get(Calendar.HOUR_OF_DAY) || Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 20) {
-                                    mapView.getMap().setNightModeEnabled(true);
-                                }
+//                                if (8 >= Calendar.getInstance().get(Calendar.HOUR_OF_DAY) || Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 20) {
+//                                    mapView.getMap().setNightModeEnabled(true);
+//                                }
                                 var placemark = mapView.getMap().getMapObjects().addPlacemark();
                                 placemark.setGeometry(new Point(latitude, longitude));
                                 placemark.setIcon(ImageProvider.fromResource(MainActivity.this, R.drawable.point));
@@ -315,12 +317,44 @@ class Markers {
                         double latitude = document.getDouble("latitude");
                         double longitude = document.getDouble("longitude");
                         String name = document.getString("name");
+                        String descriptiom = document.getString("description");
                         PlacemarkMapObject placemark = mapView.getMap().getMapObjects().addPlacemark(new Point(latitude, longitude));
                         decorate(MainActivity, placemark, name, 1);
                         placemark.addTapListener(new MapObjectTapListener() {
                             @Override
                             public boolean onMapObjectTap(@NonNull MapObject mapObject, @NonNull Point point) {
-                                Toast.makeText(context, "Password must be at least 6 symbol", Toast.LENGTH_SHORT).show();
+                                View view = LayoutInflater.from(MainActivity).inflate(R.layout.popup_info, null);
+                                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity);
+                                alertBuilder.setView(view);
+                                final TextView popup_pointname = (TextView) view.findViewById(R.id.pointname_popup);
+                                final TextView description_popup = (TextView) view.findViewById(R.id.description_popup);
+                                final TextView username_popup = (TextView) view.findViewById(R.id.username_popup);
+                                de.hdodenhof.circleimageview.CircleImageView profileThumbnail = view.findViewById(R.id.profileview_popup);
+                                description_popup.setText(descriptiom);
+                                popup_pointname.setText(name);
+
+                                FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                String username = snapshot.child("username").getValue().toString();
+                                                String profileImage = snapshot.child("thumbnail").getValue().toString();
+
+                                                username_popup.setText(username);
+                                                if (!profileImage.isEmpty()) {
+                                                    Glide.with(MainActivity).load(profileImage).into(profileThumbnail);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+
+                                Dialog dialog = alertBuilder.create();
+                                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                dialog.show();
                                 return false;
                             }
                         });
