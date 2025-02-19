@@ -1,7 +1,9 @@
 package com.example.pathfinder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.Toast;
 
@@ -37,11 +39,14 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         binding.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (binding.emailEt.getText().toString().isEmpty() || binding.passwordEt.getText().toString().isEmpty()){
                     Toast.makeText(getApplicationContext(), "Some of important filds cannot be empty", Toast.LENGTH_SHORT).show();
+                    v.vibrate(200);
                 }else{
                     FirebaseAuth.getInstance().signInWithEmailAndPassword(binding.emailEt.getText().toString(), binding.passwordEt.getText().toString())
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -52,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
                                         finish();
                                     } else {
                                         Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                        v.vibrate(200);
                                     }
                                 }
                             });

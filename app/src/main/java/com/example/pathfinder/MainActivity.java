@@ -124,6 +124,13 @@ public class MainActivity extends AppCompatActivity {
                 mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
             }
         });
+        View btn_browse = findViewById(R.id.browse_btn);
+        btn_browse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, BrowseActivity.class));
+            }
+        });
         View btn_profile = findViewById(R.id.button_profile);
         btn_profile.setOnClickListener(new View.OnClickListener() {
             @Override
