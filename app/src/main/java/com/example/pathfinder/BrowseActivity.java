@@ -2,6 +2,7 @@ package com.example.pathfinder;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -25,6 +26,7 @@ public class BrowseActivity extends AppCompatActivity {
 
     ArrayList<Marker> markers = new ArrayList<Marker>();
     RecyclerView recyclerView;
+    StateAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,10 +45,11 @@ public class BrowseActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.pointlist);
         setInitialData();
-        StateAdapter adapter = new StateAdapter(this, markers);
+        adapter = new StateAdapter(this, markers);
 
         recyclerView.setAdapter(adapter);
-        ImageButton closebtn=findViewById(R.id.closebtn);
+
+        ImageButton closebtn = findViewById(R.id.closebtn);
         closebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,12 +61,26 @@ public class BrowseActivity extends AppCompatActivity {
 
     private void setInitialData() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("markers")
+     /*   db.collection("markers")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
                         markers.add(new Marker(document.getString("name"), document.getString("description"), document.getDouble("latitude"), document.getDouble("longitude"), document.getString("ownerid")));
                     }
+                });*/
+        db.collection("markers")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
+                                   String name =document.getString("name");
+                                   String description=document.getString("description");
+                                   Double latitude=document.getDouble("latitude");
+                                   Double longitude =document.getDouble("longitude");
+                                   String  ownerid=document.getString("ownerid");
+                                   Marker marker=new Marker(name,description,latitude,longitude,ownerid);
+                                   markers.add(marker);
+                    }
+                    adapter.notifyDataSetChanged();
                 });
     }
 }

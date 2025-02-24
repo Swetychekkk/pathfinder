@@ -12,8 +12,11 @@ import android.graphics.PointF;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -330,38 +333,45 @@ class Markers {
                         placemark.addTapListener(new MapObjectTapListener() {
                             @Override
                             public boolean onMapObjectTap(@NonNull MapObject mapObject, @NonNull Point point) {
-                                View view = LayoutInflater.from(MainActivity).inflate(R.layout.popup_info, null);
-                                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity);
-                                alertBuilder.setView(view);
-                                final TextView popup_pointname = (TextView) view.findViewById(R.id.pointname_popup);
-                                final TextView description_popup = (TextView) view.findViewById(R.id.description_popup);
-                                final TextView username_popup = (TextView) view.findViewById(R.id.username_popup);
-                                de.hdodenhof.circleimageview.CircleImageView profileThumbnail = view.findViewById(R.id.profileview_popup);
-                                description_popup.setText(descriptiom);
-                                popup_pointname.setText(name);
-
-                                FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                String username = snapshot.child("username").getValue().toString();
-                                                String profileImage = snapshot.child("thumbnail").getValue().toString();
-
-                                                username_popup.setText(username);
-                                                if (!profileImage.isEmpty()) {
-                                                    Glide.with(MainActivity).load(profileImage).into(profileThumbnail);
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError error) {
-
-                                            }
-                                        });
-
-                                Dialog dialog = alertBuilder.create();
-                                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                dialog.show();
+//                                final Dialog dialog = new Dialog(context);
+//                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//                                dialog.setContentView(R.layout.popup_info);
+//                                dialog.show();
+//                                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//                                dialog.getWindow().setGravity(Gravity.BOTTOM);
+//                                View view = LayoutInflater.from(MainActivity).inflate(R.layout.popup_info, null);
+//                                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity);
+//                                alertBuilder.setView(view);
+//                                final TextView popup_pointname = (TextView) view.findViewById(R.id.pointname_popup);
+//                                final TextView description_popup = (TextView) view.findViewById(R.id.description_popup);
+//                                final TextView username_popup = (TextView) view.findViewById(R.id.username_popup);
+//                                de.hdodenhof.circleimageview.CircleImageView profileThumbnail = view.findViewById(R.id.profileview_popup);
+//                                description_popup.setText(descriptiom);
+//                                popup_pointname.setText(name);
+//
+//                                FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+//                                            @Override
+//                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                                String username = snapshot.child("username").getValue().toString();
+//                                                String profileImage = snapshot.child("thumbnail").getValue().toString();
+//
+//                                                username_popup.setText(username);
+//                                                if (!profileImage.isEmpty()) {
+//                                                    Glide.with(MainActivity).load(profileImage).into(profileThumbnail);
+//                                                }
+//                                            }
+//
+//                                            @Override
+//                                            public void onCancelled(@NonNull DatabaseError error) {
+//
+//                                            }
+//                                        });
+//
+//                                Dialog dialog = alertBuilder.create();
+//                                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//                                dialog.show();
                                 return false;
                             }
                         });
