@@ -3,20 +3,28 @@ package com.example.pathfinder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pathfinder.databinding.ActivityBrowseBinding;
 import com.example.pathfinder.databinding.ActivityRegisterBinding;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
 
 public class BrowseActivity extends AppCompatActivity {
 
     private ActivityBrowseBinding binding;
 
+    ArrayList<Marker> markers = new ArrayList<Marker>();
+    RecyclerView recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,15 +35,35 @@ public class BrowseActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        binding = ActivityBrowseBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+       // binding = ActivityBrowseBinding.inflate(getLayoutInflater());
+        setContentView(R.layout.activity_browse);
 
-        binding.closebtn.setOnClickListener(new View.OnClickListener() {
+        //setContentView(R.layout.activity_main);
+
+
+        recyclerView = findViewById(R.id.pointlist);
+        setInitialData();
+        StateAdapter adapter = new StateAdapter(this, markers);
+
+        recyclerView.setAdapter(adapter);
+        ImageButton closebtn=findViewById(R.id.closebtn);
+        closebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(BrowseActivity.this, MainActivity.class));
                 finishAfterTransition();
             }
         });
+    }
+
+    private void setInitialData() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("markers")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
+                        markers.add(new Marker(document.getString("name"), document.getString("description"), document.getDouble("latitude"), document.getDouble("longitude"), document.getString("ownerid")));
+                    }
+                });
     }
 }

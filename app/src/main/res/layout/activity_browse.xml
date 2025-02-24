@@ -37,58 +37,11 @@
 
     </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/elementLayout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pointlist"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true">
+        android:layout_height="match_parent" />
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:background="@drawable/rounded_element"
-            android:backgroundTint="#2E106A" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/button_profile"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center|start"
-            android:layout_marginLeft="15dp"
-            android:clickable="true"
-            android:elevation="10dp"
-            android:src="@drawable/placeholder_account" />
-
-        <TextView
-            android:id="@+id/pointname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:layout_marginTop="12dp"
-            android:fontFamily="@font/vladivostok_bold"
-            android:text="Username"
-            android:textColor="#FFFFFF"
-            android:textSize="16dp" />
-
-        <TextView
-            android:id="@+id/pointdescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="100dp"
-            android:layout_marginBottom="15dp"
-            android:fontFamily="@font/vladivostok_regular"
-            android:text="Lorem ipsum..."
-            android:textColor="#C7C7C7"
-            android:textSize="12dp" />
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="70dp"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginRight="15dp"
-            android:src="@drawable/arrowright" />
-
-    </FrameLayout>
 
 </LinearLayout>
