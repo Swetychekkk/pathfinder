@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -61,13 +62,7 @@ public class BrowseActivity extends AppCompatActivity {
 
     private void setInitialData() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-     /*   db.collection("markers")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (DocumentSnapshot document : queryDocumentSnapshots) {
-                        markers.add(new Marker(document.getString("name"), document.getString("description"), document.getDouble("latitude"), document.getDouble("longitude"), document.getString("ownerid")));
-                    }
-                });*/
+
         db.collection("markers")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
