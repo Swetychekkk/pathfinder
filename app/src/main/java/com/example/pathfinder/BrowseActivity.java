@@ -18,6 +18,9 @@ import com.example.pathfinder.databinding.ActivityBrowseBinding;
 import com.example.pathfinder.databinding.ActivityRegisterBinding;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.yandex.mapkit.geometry.Point;
+import com.yandex.mapkit.map.CameraPosition;
+import com.yandex.mapkit.mapview.MapView;
 
 import java.util.ArrayList;
 
@@ -42,11 +45,20 @@ public class BrowseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_browse);
 
         //setContentView(R.layout.activity_main);
+        StateAdapter.OnStateClickListener stateClickListener = new StateAdapter.OnStateClickListener() {
+            @Override
+            public void onStateClick(Marker marker, int position) {
+
+               Intent in=new Intent(getApplicationContext(),MainActivity.class);
+               in.putExtra("Marker",marker);
+               startActivity(in);
+            }
+        };
 
 
         recyclerView = findViewById(R.id.pointlist);
         setInitialData();
-        adapter = new StateAdapter(this, markers);
+        adapter = new StateAdapter(this, markers, stateClickListener);
 
         recyclerView.setAdapter(adapter);
 
@@ -69,6 +81,10 @@ public class BrowseActivity extends AppCompatActivity {
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
                                    String name =document.getString("name");
                                    String description=document.getString("description");
+                                   int maxlenght = 30;
+                                   if (description.length() >= maxlenght) {
+                                       description = description.substring(0, maxlenght) + "..";
+                                   }
                                    Double latitude=document.getDouble("latitude");
                                    Double longitude =document.getDouble("longitude");
                                    String  ownerid=document.getString("ownerid");

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialogbg"
+    android:backgroundTint="#6C3FC5"
+    android:orientation="vertical">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="14dp" />
+
+    <EditText
+        android:id="@+id/editTextText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#F6F6F6"
+        android:ems="10"
+        android:fontFamily="@font/vladivostok_bold"
+        android:hint="Input username"
+        android:inputType="text"
+        android:textColor="@color/white" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="35dp" />
+
+    <EditText
+        android:id="@+id/editTextText2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#F6F6F6"
+        android:ems="10"
+        android:fontFamily="@font/vladivostok_bold"
+        android:hint="Input your link"
+        android:inputType="text"
+        android:textColor="@color/white" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="272dp" />
+
+    <Button
+        android:id="@+id/confirmchanges"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#FFFFFF"
+        android:text="Button"
+        android:textColor="@color/black" />
+
+</LinearLayout>

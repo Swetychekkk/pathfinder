@@ -73,13 +73,16 @@ public class MainActivity extends AppCompatActivity {
 
     private static boolean isBuilderModEnabled = false;
 
+    private Point focus;
+
     private FusedLocationProviderClient fusedLocationClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     //GLOBAL COORDINATES VALUES
     private double longitude = 36.215984f;
     private double latitude = 51.740429f;
-
+    Bundle object;
+    Marker marker;
     private MapView mapView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +119,11 @@ public class MainActivity extends AppCompatActivity {
 
         mapView = findViewById(R.id.mapview); //MAPVIEW
         mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
+        object=getIntent().getExtras();
+      if (object!=null){
+        marker= (Marker) object.getSerializable("Marker");
+        mapView.getMap().move(new CameraPosition(marker.getCords(),17.0f, 150.0f, 0.0f));
+      }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -168,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
                     Dialog dialog = alertBuilder.create();
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     dialog.show();
                 }
             }
@@ -237,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
                                 Location location = task.getResult();
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
+                                if(object==null)
                                 mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
 //                                mapView.getMap().set2DMode(true);
 //                                if (8 >= Calendar.getInstance().get(Calendar.HOUR_OF_DAY) || Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 20) {
@@ -334,46 +344,77 @@ class Markers {
                         PlacemarkMapObject placemark = mapView.getMap().getMapObjects().addPlacemark(new Point(latitude, longitude));
                         decorate(MainActivity, placemark, name, 1);
                         placemark.addTapListener(new MapObjectTapListener() {
-                            private Dialog dialog;
+                            private Dialog currentDialog;
+
                             @Override
                             public boolean onMapObjectTap(@NonNull MapObject mapObject, @NonNull Point point) {
-                                Dialog dialog = new Dialog(mapView.getContext());
+                                // Закрываем предыдущий диалог
+                                if (currentDialog != null && currentDialog.isShowing()) {
+                                    currentDialog.dismiss();
+                                }
 
-                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                dialog.setContentView(R.layout.popup_info);
-                                dialog.show();
-                                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-                                dialog.getWindow().setGravity(Gravity.BOTTOM);
-                                View view = LayoutInflater.from(MainActivity).inflate(R.layout.popup_info, null);
-//                                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity);
-//                                alertBuilder.setView(view);
-                                final TextView popup_pointname = (TextView) dialog.findViewById(R.id.pointname_popup);
-                                final TextView description_popup = (TextView) dialog.findViewById(R.id.description_popup);
-                                final TextView username_popup = (TextView) dialog.findViewById(R.id.username_popup);
-                                de.hdodenhof.circleimageview.CircleImageView profileThumbnail = dialog.findViewById(R.id.profileview_popup);
-                                description_popup.setText(descriptiom);
-                                popup_pointname.setText(name);
+                                // Создаем новый диалог
+                                Context context = mapView.getContext();
+                                currentDialog = new Dialog(context);
+                                currentDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                currentDialog.setContentView(R.layout.popup_info);
 
-                                FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                // Настройка окна
+                                Window window = currentDialog.getWindow();
+                                if (window != null) {
+                                    window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                    window.setWindowAnimations(R.style.DialogAnimation);
+                                    window.setGravity(Gravity.BOTTOM);
+                                }
+
+                                // Инициализация элементов
+                                TextView popupPointname = currentDialog.findViewById(R.id.pointname_popup);
+                                TextView descriptionPopup = currentDialog.findViewById(R.id.description_popup);
+                                TextView usernamePopup = currentDialog.findViewById(R.id.username_popup);
+                                ImageButton closebtn = currentDialog.findViewById(R.id.closebtn);
+                                CircleImageView profileThumbnail = currentDialog.findViewById(R.id.profileview_popup);
+
+                                popupPointname.setText(name);
+                                descriptionPopup.setText(descriptiom);
+
+                                closebtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        currentDialog.dismiss();
+                                    }
+                                });
+
+                                // Загрузка данных пользователя
+                                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                FirebaseDatabase.getInstance().getReference()
+                                        .child("Users")
+                                        .child(userId)
                                         .addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                String username = snapshot.child("username").getValue().toString();
-                                                String profileImage = snapshot.child("thumbnail").getValue().toString();
+                                                if (!currentDialog.isShowing()) return;
 
-                                                username_popup.setText(username);
-                                                if (!profileImage.isEmpty()) {
-                                                    Glide.with(MainActivity).load(profileImage).into(profileThumbnail);
+                                                String username = snapshot.child("username").getValue(String.class);
+                                                String profileImage = snapshot.child("thumbnail").getValue(String.class);
+
+                                                usernamePopup.setText(username != null ? username : "");
+
+                                                if (profileImage != null && !profileImage.isEmpty()) {
+                                                    Glide.with(context)
+                                                            .load(profileImage)
+                                                            .into(profileThumbnail);
                                                 }
                                             }
+
                                             @Override
                                             public void onCancelled(@NonNull DatabaseError error) {
-
+                                                Log.e("Firebase", "Error loading user data", error.toException());
                                             }
                                         });
-                                return false;
+
+                                currentDialog.show();
+                                return true; // Событие обработано
                             }
                         });
                     }

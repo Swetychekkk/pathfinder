@@ -2,7 +2,9 @@ package com.example.pathfinder;
 
 import com.yandex.mapkit.geometry.Point;
 
-public class Marker {
+import java.io.Serializable;
+
+public class Marker implements Serializable {
     private String name;
     private String description;
     private double latitude;
