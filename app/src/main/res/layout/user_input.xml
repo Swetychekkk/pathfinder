@@ -4,33 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/rounded_element"
-    android:backgroundTint="#c7c7c7"
+    android:background="@drawable/dialogbg"
+    android:backgroundTint="#25193F"
     android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/vladivostok_bold"
+        android:gravity="center"
+        android:text="Make your event"
+        android:textColor="@color/white"
+        android:textSize="32dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="31dp" />
 
     <EditText
         android:id="@+id/userinput"
-        android:layout_width="wrap_content"
+        android:layout_width="339dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center|center_vertical"
         android:layout_marginBottom="14dp"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/white"
         android:ems="10"
         android:hint="Point name"
         android:inputType="text"
-        android:textColor="@color/black"
-        android:textColorHint="#000000" />
+        android:textColor="@color/white"
+        android:textColorHint="@color/white" />
 
     <EditText
         android:id="@+id/descriptioninput"
-        android:layout_width="wrap_content"
+        android:layout_width="339dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/white"
         android:ems="10"
         android:hint="Description"
         android:inputType="text"
-        android:textColor="@color/black"
-        android:textColorHint="#000000" />
+        android:textColor="@color/white"
+        android:textColorHint="@color/white" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="161dp" />
+
+    <Button
+        android:id="@+id/confirmbtn"
+        android:layout_width="322dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/vladivostok_bold"
+        android:text="Confirm creation"
+        android:textSize="18dp" />
 
 </LinearLayout>

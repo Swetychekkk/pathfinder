@@ -8,7 +8,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -22,11 +30,13 @@ public class StateAdapter  extends RecyclerView.Adapter<StateAdapter.ViewHolder>
     private final OnStateClickListener onClickListener;
     private final LayoutInflater inflater;
     private final List<Marker> markers;
+    private final Context cont;
 
     StateAdapter(Context context, List<Marker> markers, OnStateClickListener onClickListener) {
         this.onClickListener = onClickListener;
         this.markers = markers;
         this.inflater = LayoutInflater.from(context);
+        this.cont = context;
     }
     @Override
     public StateAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -40,6 +50,26 @@ public class StateAdapter  extends RecyclerView.Adapter<StateAdapter.ViewHolder>
         Marker marker = markers.get(position);
         holder.nameView.setText(marker.getName());
         holder.descriptionView.setText(marker.getDescription());
+
+//        FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        String profileImage = snapshot.child("thumbnail").getValue().toString();
+//                        if (profileImage != null && !profileImage.isEmpty()) {
+//                            Glide.with(cont)
+//                                    .load(profileImage)
+//                                    .into(holder.picView);
+//                        }
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                });
 
         holder.elementLayout.setOnClickListener(new View.OnClickListener(){
             @Override

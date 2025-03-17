@@ -15,8 +15,8 @@
 
         <ImageButton
             android:id="@+id/button_find_me"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="false"
             android:layout_marginTop="24px"

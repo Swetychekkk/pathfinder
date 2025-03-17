@@ -1,40 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/dialogbg"
     android:backgroundTint="#6C3FC5"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/vladivostok_bold"
+        android:text="EDIT PROFILE"
+        android:textColor="@color/white"
+        android:textSize="32sp" />
+
     <Space
         android:layout_width="match_parent"
-        android:layout_height="14dp" />
+        android:layout_height="23dp" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/editUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="#F6F6F6"
         android:ems="10"
         android:fontFamily="@font/vladivostok_bold"
-        android:hint="Input username"
+        android:hint="Username"
         android:inputType="text"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:textColorHint="#BDB0D8" />
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="35dp" />
+        android:layout_height="47dp" />
 
     <EditText
-        android:id="@+id/editTextText2"
+        android:id="@+id/editThumbnail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="#F6F6F6"
         android:ems="10"
         android:fontFamily="@font/vladivostok_bold"
-        android:hint="Input your link"
+        android:hint="Link to photo"
         android:inputType="text"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:textColorHint="#BDB0D8" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="15dp" />
+
+    <Button
+        android:id="@+id/resetpassword"
+        android:layout_width="203dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+        android:fontFamily="@font/vladivostok_bold"
+        android:text="Reset my password"
+        android:textColor="@color/white"
+        app:strokeColor="@color/white"
+        app:strokeWidth="1dp" />
 
     <Space
         android:layout_width="match_parent"
@@ -45,7 +72,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="#FFFFFF"
-        android:text="Button"
+        android:fontFamily="@font/vladivostok_bold"
+        android:text="Update information"
         android:textColor="@color/black" />
 
 </LinearLayout>

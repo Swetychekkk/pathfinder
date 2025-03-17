@@ -8,14 +8,14 @@
         android:id="@+id/elementLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
         android:clickable="true">
 
         <View
             android:layout_width="wrap_content"
             android:layout_height="80dp"
             android:background="@drawable/rounded_element"
-            android:backgroundTint="#2E106A" />
+            android:backgroundTint="#441F90" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/button_profile"

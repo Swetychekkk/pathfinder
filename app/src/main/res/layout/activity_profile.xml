@@ -10,10 +10,11 @@
     tools:context=".ProfileActivity" >
 
     <FrameLayout
+        android:id="@+id/profileframe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="10dp">
 
         <View
@@ -66,13 +67,15 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/upointlist"
-        android:background="@drawable/rounded_element"
-        android:backgroundTint="#6C3FC5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginRight="10dp"
-    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:background="@drawable/rounded_element"
+        android:backgroundTint="#6C3FC5"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </LinearLayout>

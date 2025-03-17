@@ -1,12 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="400dp"
     android:background="@drawable/dialogbg"
-    android:orientation="vertical"
-    android:backgroundTint="#25193F">
+    android:backgroundTint="#25193F"
+    android:orientation="vertical">
 
 
-<LinearLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -71,17 +72,12 @@
 
     <TextView
         android:id="@+id/description_popup"
-        android:layout_width="273dp"
+        android:layout_width="227dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
         android:fontFamily="@font/vladivostok_regular"
         android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         android:textColor="#C7C7C7"
         android:textSize="14dp" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
 
 </LinearLayout>

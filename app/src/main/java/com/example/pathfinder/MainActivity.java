@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -49,6 +50,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
+import com.yandex.mapkit.logo.Alignment;
+import com.yandex.mapkit.logo.HorizontalAlignment;
+import com.yandex.mapkit.logo.VerticalAlignment;
 import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.map.CompositeIcon;
 import com.yandex.mapkit.map.IconStyle;
@@ -119,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
         mapView = findViewById(R.id.mapview); //MAPVIEW
         mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
+        mapView.getMap().getLogo().setAlignment(new Alignment(HorizontalAlignment.LEFT, VerticalAlignment.TOP));
         object=getIntent().getExtras();
       if (object!=null){
         marker= (Marker) object.getSerializable("Marker");
@@ -158,26 +163,51 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMapTap(@NonNull Map map, @NonNull Point point) {
                 if (isBuilderModEnabled) {
-                    View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.user_input, null);
-                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
-                    alertBuilder.setView(view);
-                    final EditText userInput = (EditText) view.findViewById(R.id.userinput);
-                    final EditText desc = (EditText) view.findViewById(R.id.descriptioninput);
+//                    View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.user_input, null);
+//                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
+//                    alertBuilder.setView(view);
+//                    final EditText userInput = (EditText) view.findViewById(R.id.userinput);
+//                    final EditText desc = (EditText) view.findViewById(R.id.descriptioninput);
+//
+//                    alertBuilder.setCancelable(true)
+//                            .setPositiveButton("Add point", new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//                                    if (!(userInput.getText().toString().isEmpty()) && !(desc.getText().toString().isEmpty())) {
+//                                        Markers.Push(userInput.getText().toString(),desc.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getUid(), point.getLatitude(), point.getLongitude());
+//                                        map.getMapObjects().clear();
+//                                        getLastKnownLocation();
+//                                        Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude); }
+//                                }
+//                            });
+//                    Dialog dialog = alertBuilder.create();
+//                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//                    dialog.show();
+                    final Dialog dialog = new Dialog(MainActivity.this);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.user_input);
 
-                    alertBuilder.setCancelable(true)
-                            .setPositiveButton("Add point", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    if (!(userInput.getText().toString().isEmpty()) && !(desc.getText().toString().isEmpty())) {
+                    EditText userInput = dialog.findViewById(R.id.userinput);
+                    EditText desc = dialog.findViewById(R.id.descriptioninput);
+                    Button confirm = dialog.findViewById(R.id.confirmbtn);
+
+                    confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!(userInput.getText().toString().isEmpty()) && !(desc.getText().toString().isEmpty())) {
                                         Markers.Push(userInput.getText().toString(),desc.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getUid(), point.getLatitude(), point.getLongitude());
+                                        dialog.dismiss();
                                         map.getMapObjects().clear();
                                         getLastKnownLocation();
                                         Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude); }
                                 }
-                            });
-                    Dialog dialog = alertBuilder.create();
-                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        });
+
                     dialog.show();
+                    dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+                    dialog.getWindow().setGravity(Gravity.BOTTOM);
                 }
             }
 
@@ -248,10 +278,10 @@ public class MainActivity extends AppCompatActivity {
                                 longitude = location.getLongitude();
                                 if(object==null)
                                 mapView.getMap().move(new CameraPosition(new Point(latitude, longitude),17.0f, 150.0f, 0.0f));
-//                                mapView.getMap().set2DMode(true);
-//                                if (8 >= Calendar.getInstance().get(Calendar.HOUR_OF_DAY) || Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 20) {
-//                                    mapView.getMap().setNightModeEnabled(true);
-//                                }
+                                mapView.getMap().set2DMode(true);
+                                if (8 >= Calendar.getInstance().get(Calendar.HOUR_OF_DAY) || Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 20) {
+                                    mapView.getMap().setNightModeEnabled(true);
+                                }
                                 var placemark = mapView.getMap().getMapObjects().addPlacemark();
                                 placemark.setGeometry(new Point(latitude, longitude));
                                 placemark.setIcon(ImageProvider.fromResource(MainActivity.this, R.drawable.point));
@@ -340,7 +370,8 @@ class Markers {
                         double latitude = document.getDouble("latitude");
                         double longitude = document.getDouble("longitude");
                         String name = document.getString("name");
-                        String descriptiom = document.getString("description");
+                        String description = document.getString("description");
+                        String ownerid = document.getString("ownerid");
                         PlacemarkMapObject placemark = mapView.getMap().getMapObjects().addPlacemark(new Point(latitude, longitude));
                         decorate(MainActivity, placemark, name, 1);
                         placemark.addTapListener(new MapObjectTapListener() {
@@ -376,7 +407,12 @@ class Markers {
                                 CircleImageView profileThumbnail = currentDialog.findViewById(R.id.profileview_popup);
 
                                 popupPointname.setText(name);
-                                descriptionPopup.setText(descriptiom);
+                                final int maxlenght = 300;
+                                if (description.length() >= maxlenght) {
+                                    descriptionPopup.setText(description.substring(0, maxlenght) + "...");
+                                } else {
+                                    descriptionPopup.setText(description);
+                                }
 
                                 closebtn.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -386,7 +422,7 @@ class Markers {
                                 });
 
                                 // Загрузка данных пользователя
-                                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                String userId = ownerid;
                                 FirebaseDatabase.getInstance().getReference()
                                         .child("Users")
                                         .child(userId)
@@ -395,7 +431,7 @@ class Markers {
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                 if (!currentDialog.isShowing()) return;
 
-                                                String username = snapshot.child("username").getValue(String.class);
+                                                String username = "by " + snapshot.child("username").getValue(String.class);
                                                 String profileImage = snapshot.child("thumbnail").getValue(String.class);
 
                                                 usernamePopup.setText(username != null ? username : "");

@@ -40,6 +40,8 @@ public class Marker implements Serializable {
         return new Point(latitude, longitude);
     }
 
+    public String getOwner() {return ownerid; }
+
     public void setFlagResource(Point geometryPoint) {
         this.latitude = geometryPoint.getLatitude();
         this.longitude = geometryPoint.getLongitude();
