@@ -52,6 +52,7 @@ public class BrowseActivity extends AppCompatActivity {
                Intent in=new Intent(getApplicationContext(),MainActivity.class);
                in.putExtra("Marker",marker);
                startActivity(in);
+               finish();
             }
         };
 
