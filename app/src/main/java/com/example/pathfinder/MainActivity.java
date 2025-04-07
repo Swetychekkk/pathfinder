@@ -11,6 +11,7 @@ import android.graphics.PointF;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -208,12 +209,12 @@ public class MainActivity extends AppCompatActivity {
                             if (object!=null){
                                 marker= (Marker) object.getSerializable("Marker");
                                 mapView.getMap().move(new CameraPosition(marker.getCords(),17.0f, 150.0f, 0.0f));
-                                double delta = 0.4f;
+                                double delta = 0.2f;
                                 double minLat = latitude - delta;
                                 double maxLat = latitude + delta;
                                 double minLon = longitude - delta;
                                 double maxLon = longitude + delta;
-                                if (!(marker.getCords().getLatitude() >= minLat && marker.getCords().getLatitude() <= maxLat) || !(marker.getCords().getLongitude() >= minLon && marker.getCords().getLongitude() <= maxLon)) {
+                                if ((!(marker.getCords().getLatitude() >= minLat && marker.getCords().getLatitude() <= maxLat) || !(marker.getCords().getLongitude() >= minLon && marker.getCords().getLongitude() <= maxLon))) {
                                     Toast.makeText(getApplicationContext(), "New point loaded successfully", Toast.LENGTH_SHORT).show();
                                     Markers.load(MainActivity.this, mapView, getApplicationContext(), marker.getCords().getLatitude(), marker.getCords().getLongitude(), placemarkTapListener);
                                 }
