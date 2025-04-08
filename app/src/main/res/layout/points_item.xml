@@ -12,6 +12,7 @@
         android:clickable="true">
 
         <View
+            android:id="@+id/background"
             android:layout_width="wrap_content"
             android:layout_height="80dp"
             android:background="@drawable/rounded_element"

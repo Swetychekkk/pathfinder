@@ -31,16 +31,32 @@
             android:layout_marginTop="5dp"
             android:src="@drawable/placeholder_account" />
 
-        <TextView
-            android:id="@+id/username_profile"
-            android:layout_width="238dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:layout_marginTop="3dp"
-            android:fontFamily="@font/vladivostok_bold"
-            android:text="USERNAME"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/username_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/vladivostok_bold"
+                android:text="USERNAME"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/badgeView"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:scaleType="fitXY"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/exit" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/joindate_textview"

@@ -7,17 +7,19 @@ import java.io.Serializable;
 public class Marker implements Serializable {
     private String name;
     private String description;
+    private String priority;
     private double latitude;
     private double longitude;
     private String ownerid;
 
-    public Marker(String name, String description, double latitude, double longitude, String ownerid){
+    public Marker(String name, String description, double latitude, double longitude, String ownerid, String priority){
 
         this.name=name;
         this.description=description;
         this.latitude=latitude;
         this.longitude=longitude;
         this.ownerid=ownerid;
+        this.priority = priority;
     }
 
     public String getName() {
@@ -31,6 +33,8 @@ public class Marker implements Serializable {
     public String getDescription() {
         return this.description;
     }
+
+    public String getPriority() { return this.priority; }
 
     public void setDescription(String description) {
         this.description = description;

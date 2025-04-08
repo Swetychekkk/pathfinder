@@ -16,6 +16,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,6 +61,8 @@ public class ProfileActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     StateAdapter adapter;
 
+    private static final int maxlenght = 22;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,9 +82,10 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onStateClick(Marker marker, int position) {
 
-                Intent in=new Intent(getApplicationContext(),MainActivity.class);
-                in.putExtra("Marker",marker);
-                startActivity(in);
+                Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+                intent.putExtra("Marker",marker);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         };
 
@@ -108,6 +112,22 @@ public class ProfileActivity extends AppCompatActivity {
                         String username = snapshot.child("username").getValue().toString();
                         String profileImage = snapshot.child("thumbnail").getValue().toString();
                         String joindate = snapshot.child("joindate").getValue().toString();
+                        if (snapshot.child("badge").exists() == true) {
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("badges")
+                                    .whereEqualTo("badge_id", snapshot.child("badge").getValue().toString())
+                                    .get()
+                                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                                        for (DocumentSnapshot document : queryDocumentSnapshots) {
+                                            String badgeURL = document.getString("url").toString();
+                                            ImageView badgeView = findViewById(R.id.badgeView);
+                                            if (!badgeURL.isEmpty()) {
+                                                badgeView.setVisibility(View.VISIBLE);
+                                                Glide.with(ProfileActivity.this).load(badgeURL).into(badgeView);
+                                            }
+                                        }
+                                    });
+                        }
 
                         TextView usernameTextView = findViewById(R.id.username_profile);
                         TextView joindateTextView = findViewById(R.id.joindate_textview);
@@ -140,14 +160,15 @@ public class ProfileActivity extends AppCompatActivity {
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
                         String name =document.getString("name");
                         String description=document.getString("description");
-                        int maxlenght = 30;
                         if (description.length() >= maxlenght) {
                             description = description.substring(0, maxlenght) + "..";
                         }
-                        Double latitude=document.getDouble("latitude");
-                        Double longitude =document.getDouble("longitude");
-                        String  ownerid=document.getString("ownerid");
-                        Marker marker =new Marker(name,description,latitude,longitude,ownerid);
+                        Double latitude = document.getDouble("latitude");
+                        Double longitude = document.getDouble("longitude");
+                        String ownerid = document.getString("ownerid");
+                        String priority = document.getString("priority");
+
+                        Marker marker =new Marker(name,description,latitude,longitude,ownerid, priority);
                         markers.add(marker);
                     }
                     adapter.notifyDataSetChanged();

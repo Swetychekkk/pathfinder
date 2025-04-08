@@ -49,6 +49,46 @@
 
     <Space
         android:layout_width="match_parent"
+        android:layout_height="13dp" />
+
+    <RadioGroup
+        android:id="@+id/colorGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radioRed"
+            android:layout_width="29dp"
+            android:layout_height="33dp"
+            app:buttonTint="#ec2a2a" />
+
+        <RadioButton
+            android:id="@+id/radioYellow"
+            android:layout_width="29dp"
+            android:layout_height="33dp"
+            android:layout_weight="1"
+            app:buttonTint="#ecbe2a" />
+
+        <RadioButton
+            android:id="@+id/radioBlue"
+            android:layout_width="29dp"
+            android:layout_height="33dp"
+            android:layout_weight="1"
+            app:buttonTint="#2a5fec" />
+
+        <RadioButton
+            android:id="@+id/radioGreen"
+            android:layout_width="29dp"
+            android:layout_height="33dp"
+            android:layout_weight="1"
+            app:buttonTint="#3fa544" />
+
+    </RadioGroup>
+
+    <Space
+        android:layout_width="match_parent"
         android:layout_height="161dp" />
 
     <Button

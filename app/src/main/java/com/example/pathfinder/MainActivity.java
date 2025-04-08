@@ -6,11 +6,21 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -19,6 +29,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +39,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -144,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button_find_me).setOnClickListener(view -> {
             mapView.getMap().move(new CameraPosition(new Point(latitude, longitude), 17.0f, 150.0f, 0.0f));
             Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude, placemarkTapListener);
+            Markers.makeUserPoint(mapView, latitude, longitude, MainActivity.this);
         });
 
 //        mapView.getMap().addCameraListener((map, cameraPosition, cameraUpdateSource, finished) -> {
@@ -167,8 +181,17 @@ public class MainActivity extends AppCompatActivity {
 
                     confirm.setOnClickListener(v -> {
                         if (!userInput.getText().toString().isEmpty() && !desc.getText().toString().isEmpty()) {
+                            //GET RADIO GROUP ELEMENT
+                            RadioGroup colorGroup = dialog.findViewById(R.id.colorGroup);
+                            int SelectedId = colorGroup.getCheckedRadioButtonId();
+                            String selectedColor = "#451D95";
+                            if (SelectedId != -1) {
+                                RadioButton selectedColorPicker = dialog.findViewById(SelectedId);
+                                selectedColor = String.format("#%06X", (0xFFFFFF & selectedColorPicker.getButtonTintList().getDefaultColor()));
+                            }
+
                             Markers.Push(userInput.getText().toString(), desc.getText().toString(),
-                                    FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                    FirebaseAuth.getInstance().getCurrentUser().getUid(), selectedColor,
                                     point.getLatitude(), point.getLongitude());
                             dialog.dismiss();
                             Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude, placemarkTapListener);
@@ -219,15 +242,7 @@ public class MainActivity extends AppCompatActivity {
                                     Markers.load(MainActivity.this, mapView, getApplicationContext(), marker.getCords().getLatitude(), marker.getCords().getLongitude(), placemarkTapListener);
                                 }
                             }
-                            var placemark = mapView.getMap().getMapObjects().addPlacemark();
-                            placemark.setGeometry(new Point(latitude, longitude));
-                            placemark.setIcon(ImageProvider.fromResource(MainActivity.this, R.drawable.point));
-                            placemark.setIconStyle(
-                                    new IconStyle()
-                                            .setScale(0.5f)
-                                            .setAnchor(new PointF(0.5f, 1.0f))
-                                            .setFlat(true)
-                            );
+                            Markers.makeUserPoint(mapView, latitude, longitude, MainActivity.this);
                         }
                     });
         } catch (SecurityException e) {
@@ -271,12 +286,30 @@ public class MainActivity extends AppCompatActivity {
 }
 
 class Markers {
-
-    public static void decorate(Activity activity, PlacemarkMapObject placemark, String name) {
+    //recolor pin texture
+    public static ImageProvider recolor(String hexColor, Activity activity) {
+        Integer color = Color.parseColor(hexColor);
+        Bitmap original = BitmapFactory.decodeResource(activity.getResources(), R.drawable.pin);
+        Bitmap resultBitmap = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(resultBitmap);
+        Paint paint = new Paint();
+        ColorFilter filter = new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY);
+        paint.setColorFilter(filter);
+        canvas.drawBitmap(original, 0, 0, paint);
+        return ImageProvider.fromBitmap(resultBitmap);
+    }
+    public static void decorate(Activity activity, PlacemarkMapObject placemark, String name, String priority_color) {
         CompositeIcon compositeIcon = placemark.useCompositeIcon();
-        compositeIcon.setIcon("pin_upper", ImageProvider.fromResource(activity, R.drawable.pin), new IconStyle()
+        if (priority_color == "#451D95") {
+        compositeIcon.setIcon("pin_upper", recolor("#451D95", activity), new IconStyle()
                 .setScale(0.4f)
                 .setAnchor(new PointF(0.5f, 0.9f)));
+        } else {
+            compositeIcon.setIcon("pin_upper", recolor(priority_color, activity), new IconStyle()
+                    .setScale(0.4f)
+                    .setAnchor(new PointF(0.5f, 0.9f)));
+        }
+
         compositeIcon.setIcon("point", ImageProvider.fromResource(activity, R.drawable.point), new IconStyle()
                 .setScale(0.4f)
                 .setFlat(true)
@@ -288,13 +321,26 @@ class Markers {
                 .setOutlineWidth(3));
     }
 
-    public static void Push(String name, String description, String ownerid, double lat, double lng) {
+    public static void makeUserPoint(MapView mapView, Double latitude, Double longitude, Context context) {
+        var placemark = mapView.getMap().getMapObjects().addPlacemark();
+        placemark.setGeometry(new Point(latitude, longitude));
+        placemark.setIcon(ImageProvider.fromResource(context, R.drawable.point));
+        placemark.setIconStyle(
+                new IconStyle()
+                        .setScale(0.5f)
+                        .setAnchor(new PointF(0.5f, 1.0f))
+                        .setFlat(true)
+        );
+    }
+
+    public static void Push(String name, String description, String ownerid, String priority, double lat, double lng) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         java.util.Map<String, Object> marker = new HashMap<>();
         marker.put("name", name);
         marker.put("description", description);
         marker.put("ownerid", ownerid);
+        marker.put("priority", priority);
         marker.put("latitude", lat);
         marker.put("longitude", lng);
 
@@ -326,9 +372,10 @@ class Markers {
                         double lat = document.getDouble("latitude");
                         double lon = document.getDouble("longitude");
                         String name = document.getString("name");
+                        String priority = document.getString("priority");
 
                         PlacemarkMapObject placemark = mapObjects.addPlacemark(new Point(lat, lon));
-                        decorate(activity, placemark, name);
+                        decorate(activity, placemark, name, priority);
 
                         // Передаём статический обработчик (один и тот же для всех меток)
                         placemark.addTapListener(tapListener);
@@ -354,6 +401,7 @@ class Markers {
                 String name = (String) data.get("name");
                 String description = (String) data.get("description");
                 String ownerid = (String) data.get("ownerid");
+                String priority = (String) data.get("priority");
 
                 if (currentDialog != null && currentDialog.isShowing()) currentDialog.dismiss();
 
@@ -376,6 +424,8 @@ class Markers {
                 CircleImageView profileThumbnail = currentDialog.findViewById(R.id.profileview_popup);
 
                 popupPointname.setText(name);
+                Integer color = ColorUtils.blendARGB(Color.parseColor(priority), Color.BLACK, 0.25f); //MAKING COLOR FILTER
+                currentDialog.findViewById(R.id.layout_popup).setBackgroundTintList(ColorStateList.valueOf(color)); //CHANGING BACKGROUND COLOR
                 descriptionPopup.setText(description != null && description.length() > 300 ? description.substring(0, 300) + "..." : description);
 
                 closebtn.setOnClickListener(view -> currentDialog.dismiss());

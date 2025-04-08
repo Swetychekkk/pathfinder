@@ -1,6 +1,8 @@
 package com.example.pathfinder;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -50,7 +53,8 @@ public class StateAdapter  extends RecyclerView.Adapter<StateAdapter.ViewHolder>
         Marker marker = markers.get(position);
         holder.nameView.setText(marker.getName());
         holder.descriptionView.setText(marker.getDescription());
-
+        Integer color = ColorUtils.blendARGB(Color.parseColor(marker.getPriority()), Color.BLACK, 0.25f); //MAKING COLOR FILTER
+        holder.background.setBackgroundTintList(ColorStateList.valueOf(color)); //CHANGING BACKGROUND COLOR
 //        FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
 //                .addListenerForSingleValueEvent(new ValueEventListener() {
 //                    @Override
@@ -87,6 +91,7 @@ public class StateAdapter  extends RecyclerView.Adapter<StateAdapter.ViewHolder>
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final CircleImageView picView;
+        final View background;
         final TextView nameView, descriptionView;
         final FrameLayout elementLayout;
         ViewHolder(View view){
@@ -95,6 +100,7 @@ public class StateAdapter  extends RecyclerView.Adapter<StateAdapter.ViewHolder>
             nameView = view.findViewById(R.id.pointname);
             elementLayout = view.findViewById(R.id.elementLayout);
             descriptionView = view.findViewById(R.id.pointdescription);
+            background = view.findViewById(R.id.background);
         }
     }
 }

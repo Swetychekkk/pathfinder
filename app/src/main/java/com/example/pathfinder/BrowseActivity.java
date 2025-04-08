@@ -86,10 +86,11 @@ public class BrowseActivity extends AppCompatActivity {
                                    if (description.length() >= maxlenght) {
                                        description = description.substring(0, maxlenght) + "..";
                                    }
-                                   Double latitude=document.getDouble("latitude");
-                                   Double longitude =document.getDouble("longitude");
-                                   String  ownerid=document.getString("ownerid");
-                                   Marker marker=new Marker(name,description,latitude,longitude,ownerid);
+                                   Double latitude = document.getDouble("latitude");
+                                   Double longitude = document.getDouble("longitude");
+                                   String ownerid = document.getString("ownerid");
+                                   String priority = document.getString("priority");
+                                   Marker marker=new Marker(name,description,latitude,longitude,ownerid, priority);
                                    markers.add(marker);
                     }
                     adapter.notifyDataSetChanged();
