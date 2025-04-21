@@ -18,6 +18,7 @@ import com.example.pathfinder.databinding.ActivityBrowseBinding;
 import com.example.pathfinder.databinding.ActivityRegisterBinding;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.yandex.mapkit.Image;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.mapview.MapView;
@@ -31,6 +32,9 @@ public class BrowseActivity extends AppCompatActivity {
     ArrayList<Marker> markers = new ArrayList<Marker>();
     RecyclerView recyclerView;
     StateAdapter adapter;
+
+    private boolean searchfield_state = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +66,24 @@ public class BrowseActivity extends AppCompatActivity {
         adapter = new StateAdapter(this, markers, stateClickListener);
 
         recyclerView.setAdapter(adapter);
+
+        ImageButton searchButton = findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!searchfield_state) {
+                    findViewById(R.id.textPrev).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.closebtn).setVisibility(View.GONE);
+                    findViewById(R.id.searchField).setVisibility(View.VISIBLE);
+                    searchfield_state = true;
+                } else {
+                    findViewById(R.id.textPrev).setVisibility(View.VISIBLE);
+                    findViewById(R.id.closebtn).setVisibility(View.VISIBLE);
+                    findViewById(R.id.searchField).setVisibility(View.GONE);
+                    searchfield_state = false;
+                }
+            }
+        });
 
         ImageButton closebtn = findViewById(R.id.closebtn);
         closebtn.setOnClickListener(new View.OnClickListener() {

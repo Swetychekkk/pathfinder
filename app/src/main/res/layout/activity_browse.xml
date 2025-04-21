@@ -12,10 +12,23 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="15dp">
 
+        <ImageButton
+            android:id="@+id/searchButton"
+            android:layout_width="40dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:backgroundTint="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:scaleX="2"
+            android:scaleY="2"
+            app:srcCompat="@drawable/ico_search" />
+
         <TextView
+            android:id="@+id/textPrev"
             android:layout_width="289dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -34,6 +47,18 @@
             android:background="@android:color/transparent"
             android:scaleType="fitXY"
             android:src="@drawable/exit" />
+
+        <EditText
+            android:id="@+id/searchField"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/white"
+            android:ems="10"
+            android:hint="Search"
+            android:inputType="text"
+            android:textColorHint="@color/white"
+            android:visibility="gone" />
 
     </FrameLayout>
 
