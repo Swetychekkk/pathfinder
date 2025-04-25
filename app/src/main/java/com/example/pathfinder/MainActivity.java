@@ -47,10 +47,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -72,8 +74,10 @@ import com.yandex.mapkit.map.TextStyle;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.runtime.image.ImageProvider;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -188,9 +192,10 @@ public class MainActivity extends AppCompatActivity {
                                 RadioButton selectedColorPicker = dialog.findViewById(SelectedId);
                                 selectedColor = String.format("#%06X", (0xFFFFFF & selectedColorPicker.getButtonTintList().getDefaultColor()));
                             }
+                            Timestamp timestamp = Timestamp.now();
 
                             Markers.Push(userInput.getText().toString(), desc.getText().toString(),
-                                    FirebaseAuth.getInstance().getCurrentUser().getUid(), selectedColor,
+                                    FirebaseAuth.getInstance().getCurrentUser().getUid(), selectedColor, timestamp,
                                     point.getLatitude(), point.getLongitude());
                             dialog.dismiss();
                             Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude, placemarkTapListener);
@@ -332,7 +337,7 @@ class Markers {
         );
     }
 
-    public static void Push(String name, String description, String ownerid, String priority, double lat, double lng) {
+    public static void Push(String name, String description, String ownerid, String priority, Timestamp timestamp, double lat, double lng) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         java.util.Map<String, Object> marker = new HashMap<>();
@@ -342,6 +347,7 @@ class Markers {
         marker.put("priority", priority);
         marker.put("latitude", lat);
         marker.put("longitude", lng);
+        marker.put("dest_time", timestamp);
 
         db.collection("markers")
                 .add(marker)
@@ -399,6 +405,7 @@ class Markers {
 
                 String name = (String) data.get("name");
                 String description = (String) data.get("description");
+                Timestamp dest_time = (Timestamp) data.get("dest_time");
                 String ownerid = (String) data.get("ownerid");
                 String priority = (String) data.get("priority");
 
@@ -407,6 +414,9 @@ class Markers {
                 currentDialog = new Dialog(activity);
                 currentDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 currentDialog.setContentView(R.layout.popup_info);
+                SimpleDateFormat sdf = new SimpleDateFormat("HH\nmm");
+                SimpleDateFormat dateform = new SimpleDateFormat("d MMM", Locale.US);
+//                Toast.makeText(activity.getApplicationContext(), sdf.format(dest_time.toDate()) , Toast.LENGTH_SHORT).show();
 
                 Window window = currentDialog.getWindow();
                 if (window != null) {
@@ -421,7 +431,11 @@ class Markers {
                 TextView usernamePopup = currentDialog.findViewById(R.id.username_popup);
                 ImageButton closebtn = currentDialog.findViewById(R.id.closebtn);
                 CircleImageView profileThumbnail = currentDialog.findViewById(R.id.profileview_popup);
+                TextView timeView = currentDialog.findViewById(R.id.timeView);
+                TextView dateView = currentDialog.findViewById(R.id.dateView);
 
+                timeView.setText(sdf.format(dest_time.toDate()));
+                dateView.setText(dateform.format(dest_time.toDate()));
                 popupPointname.setText(name);
                 Integer color = ColorUtils.blendARGB(Color.parseColor(priority), Color.BLACK, 0.25f); //MAKING COLOR FILTER
                 currentDialog.findViewById(R.id.layout_popup).setBackgroundTintList(ColorStateList.valueOf(color)); //CHANGING BACKGROUND COLOR
