@@ -63,6 +63,17 @@
         app:strokeColor="@color/white"
         app:strokeWidth="1dp" />
 
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="203dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+        android:fontFamily="@font/vladivostok_bold"
+        android:text="logout"
+        android:textColor="@color/white"
+        app:strokeColor="#E62020"
+        app:strokeWidth="1dp" />
+
     <Space
         android:layout_width="match_parent"
         android:layout_height="272dp" />

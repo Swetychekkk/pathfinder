@@ -3,7 +3,10 @@ package com.example.pathfinder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -62,7 +65,7 @@ public class BrowseActivity extends AppCompatActivity {
 
 
         recyclerView = findViewById(R.id.pointlist);
-        setInitialData();
+        setInitialData(null);
         adapter = new StateAdapter(this, markers, stateClickListener);
 
         recyclerView.setAdapter(adapter);
@@ -85,6 +88,20 @@ public class BrowseActivity extends AppCompatActivity {
             }
         });
 
+        EditText searchField = findViewById(R.id.searchField);
+        searchField.setOnEditorActionListener(((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    actionId == EditorInfo.IME_ACTION_DONE ||
+                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+                String searchData = searchField.getText().toString().trim();
+                markers.clear();
+                setInitialData(searchData);
+                return true;
+            }
+            return false;
+        }));
+
         ImageButton closebtn = findViewById(R.id.closebtn);
         closebtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +112,7 @@ public class BrowseActivity extends AppCompatActivity {
         });
     }
 
-    private void setInitialData() {
+    private void setInitialData(String searchData) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("markers")
@@ -104,16 +121,26 @@ public class BrowseActivity extends AppCompatActivity {
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
                                    String name =document.getString("name");
                                    String description=document.getString("description");
-                                   int maxlenght = 30;
-                                   if (description.length() >= maxlenght) {
-                                       description = description.substring(0, maxlenght) + "..";
-                                   }
-                                   Double latitude = document.getDouble("latitude");
-                                   Double longitude = document.getDouble("longitude");
-                                   String ownerid = document.getString("ownerid");
-                                   String priority = document.getString("priority");
-                                   Marker marker=new Marker(name,description,latitude,longitude,ownerid, priority);
-                                   markers.add(marker);
+
+                                    int maxLength = 30;
+                                    if (description != null && description.length() >= maxLength) {
+                                        description = description.substring(0, maxLength) + "..";
+                                    }
+
+                                    Double latitude = document.getDouble("latitude");
+                                    Double longitude = document.getDouble("longitude");
+                                    String ownerid = document.getString("ownerid");
+                                    String priority = document.getString("priority");
+
+                                    Marker marker = new Marker(name, description, latitude, longitude, ownerid, priority);
+
+                                    if (searchData != null && name.toLowerCase().contains(searchData.toLowerCase())) {
+                                        markers.add(marker);
+                                    } else if (searchData != null) {
+                                        Toast.makeText(getApplicationContext(), searchData, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        markers.add(marker);
+                                    }
                     }
                     adapter.notifyDataSetChanged();
                 });

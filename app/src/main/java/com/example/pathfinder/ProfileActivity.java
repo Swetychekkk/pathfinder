@@ -112,6 +112,8 @@ public class ProfileActivity extends AppCompatActivity {
                         String username = snapshot.child("username").getValue().toString();
                         String profileImage = snapshot.child("thumbnail").getValue().toString();
                         String joindate = snapshot.child("joindate").getValue().toString();
+
+                        //badge-set-image
                         if (snapshot.child("badge").exists() == true) {
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
                             db.collection("badges")
@@ -179,6 +181,19 @@ public class ProfileActivity extends AppCompatActivity {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.edit_profile);
+
+        Button logoutButton = dialog.findViewById(R.id.logout);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish(); // завершает текущую активити
+                startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+            }
+        });
 
         Button reset_pass_btn = dialog.findViewById(R.id.resetpassword);
         reset_pass_btn.setOnClickListener(new View.OnClickListener() {
