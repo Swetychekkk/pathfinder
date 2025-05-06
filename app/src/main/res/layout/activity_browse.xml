@@ -34,6 +34,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/vladivostok_bold"
             android:gravity="center"
+            android:clickable="true"
             android:text="User Markers"
             android:textColor="#FFFFFF"
             android:textSize="26dp" />
@@ -61,6 +62,37 @@
             android:visibility="gone" />
 
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/dropdownMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:background="@drawable/dropdown_background"
+        android:padding="10dp"
+        android:visibility="gone"
+        android:elevation="4dp">
+
+        <Button
+            android:id="@+id/usersFilterBTN"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Users" />
+
+        <Button
+            android:id="@+id/communitiesFilterBTN"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Communities" />
+    </LinearLayout>
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pointlist"

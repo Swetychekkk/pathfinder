@@ -3,6 +3,7 @@ package com.example.pathfinder;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,6 +33,7 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -89,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private double longitude = 36.215984f;
     private double latitude = 51.740429f;
+
+    private Calendar selectedCalendar = Calendar.getInstance();
+
     private MapView mapView;
     Bundle object;
     Marker marker;
@@ -181,6 +186,31 @@ public class MainActivity extends AppCompatActivity {
                     EditText userInput = dialog.findViewById(R.id.userinput);
                     EditText desc = dialog.findViewById(R.id.descriptioninput);
                     Button confirm = dialog.findViewById(R.id.confirmbtn);
+                    Button timePickerBTN = dialog.findViewById(R.id.selectTime_btn);
+
+                    timePickerBTN.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final Calendar calendar = Calendar.getInstance();
+                            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                            int minute = calendar.get(Calendar.MINUTE);
+
+                            TimePickerDialog timePickerDialog = new TimePickerDialog(
+                                    MainActivity.this,
+                                    (TimePicker view, int selectedHour, int selectedMinute) -> {
+                                        String time = String.format("%02d:%02d", selectedHour, selectedMinute);
+                                        Toast.makeText(getApplicationContext(), time, Toast.LENGTH_SHORT).show();
+//                                        timeTextView.setText("Выбранное время: " + time);
+                                        selectedCalendar = calendar;
+                                    },
+                                    hour,
+                                    minute,
+                                    true // true = 24-часовой формат, false = AM/PM
+                            );
+                            timePickerDialog.show();
+                        }
+                    });
+                    Timestamp timestamp = new Timestamp(selectedCalendar.getTime());
 
                     confirm.setOnClickListener(v -> {
                         if (!userInput.getText().toString().isEmpty() && !desc.getText().toString().isEmpty()) {
@@ -192,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
                                 RadioButton selectedColorPicker = dialog.findViewById(SelectedId);
                                 selectedColor = String.format("#%06X", (0xFFFFFF & selectedColorPicker.getButtonTintList().getDefaultColor()));
                             }
-                            Timestamp timestamp = Timestamp.now();
 
                             Markers.Push(userInput.getText().toString(), desc.getText().toString(),
                                     FirebaseAuth.getInstance().getCurrentUser().getUid(), selectedColor, timestamp,

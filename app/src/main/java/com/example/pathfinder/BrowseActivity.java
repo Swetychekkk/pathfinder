@@ -5,9 +5,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -36,6 +41,8 @@ public class BrowseActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     StateAdapter adapter;
 
+    ProgressBar progressBar;
+
     private boolean searchfield_state = false;
 
     @Override
@@ -63,9 +70,11 @@ public class BrowseActivity extends AppCompatActivity {
             }
         };
 
+        progressBar = findViewById(R.id.progressBar);
 
         recyclerView = findViewById(R.id.pointlist);
         setInitialData(null);
+
         adapter = new StateAdapter(this, markers, stateClickListener);
 
         recyclerView.setAdapter(adapter);
@@ -88,6 +97,51 @@ public class BrowseActivity extends AppCompatActivity {
             }
         });
 
+        LinearLayout dropdownMenu = findViewById(R.id.dropdownMenu);
+        TextView textPrev = findViewById(R.id.textPrev);
+        RecyclerView pointlst = findViewById(R.id.pointlist);
+
+        Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.dropdown_slide_in);
+        Animation slideOut = AnimationUtils.loadAnimation(this, R.anim.dropdown_slide_out);
+
+        textPrev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (dropdownMenu.getVisibility() == View.GONE && recyclerView.getVisibility() == View.VISIBLE) {
+                    dropdownMenu.setVisibility(View.VISIBLE);
+                    dropdownMenu.startAnimation(slideIn);
+                    recyclerView.startAnimation(slideOut);
+                    slideOut.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {}
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            recyclerView.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {}
+                    });
+                } else {
+                    dropdownMenu.startAnimation(slideOut);
+                    slideOut.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {}
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            dropdownMenu.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {}
+                    });
+                }
+            }
+        });
+
         EditText searchField = findViewById(R.id.searchField);
         searchField.setOnEditorActionListener(((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH ||
@@ -96,7 +150,9 @@ public class BrowseActivity extends AppCompatActivity {
 
                 String searchData = searchField.getText().toString().trim();
                 markers.clear();
+                progressBar.setVisibility(View.VISIBLE);
                 setInitialData(searchData);
+//                progressBar.setVisibility(View.INVISIBLE);
                 return true;
             }
             return false;
@@ -136,10 +192,12 @@ public class BrowseActivity extends AppCompatActivity {
 
                                     if (searchData != null && name.toLowerCase().contains(searchData.toLowerCase())) {
                                         markers.add(marker);
+                                        progressBar.setVisibility(View.GONE);
                                     } else if (searchData != null) {
-                                        Toast.makeText(getApplicationContext(), searchData, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "Its empty", Toast.LENGTH_SHORT).show();
                                     } else {
                                         markers.add(marker);
+                                        progressBar.setVisibility(View.GONE);
                                     }
                     }
                     adapter.notifyDataSetChanged();

@@ -87,6 +87,18 @@
 
     </RadioGroup>
 
+    <Button
+        android:id="@+id/selectTime_btn"
+        android:layout_width="203dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@android:color/transparent"
+        android:fontFamily="@font/vladivostok_bold"
+        android:text="Time picker"
+        android:textColor="@color/white"
+        app:strokeColor="@color/white"
+        app:strokeWidth="1dp" />
+
     <Space
         android:layout_width="match_parent"
         android:layout_height="161dp" />
