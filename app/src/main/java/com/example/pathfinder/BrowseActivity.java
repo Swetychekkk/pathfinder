@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -42,6 +43,8 @@ public class BrowseActivity extends AppCompatActivity {
     StateAdapter adapter;
 
     ProgressBar progressBar;
+
+    String search_state = "markers";
 
     private boolean searchfield_state = false;
 
@@ -108,8 +111,7 @@ public class BrowseActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (dropdownMenu.getVisibility() == View.GONE && recyclerView.getVisibility() == View.VISIBLE) {
-                    dropdownMenu.setVisibility(View.VISIBLE);
-                    dropdownMenu.startAnimation(slideIn);
+                    if (search_state == "markers") {
                     recyclerView.startAnimation(slideOut);
                     slideOut.setAnimationListener(new Animation.AnimationListener() {
                         @Override
@@ -118,11 +120,17 @@ public class BrowseActivity extends AppCompatActivity {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             recyclerView.setVisibility(View.GONE);
+                            recyclerView.clearAnimation();
+                            dropdownMenu.setVisibility(View.VISIBLE);
+                            dropdownMenu.startAnimation(slideIn);
                         }
 
                         @Override
                         public void onAnimationRepeat(Animation animation) {}
-                    });
+                    });} else {
+                        dropdownMenu.setVisibility(View.VISIBLE);
+                        dropdownMenu.startAnimation(slideIn);
+                    }
                 } else {
                     dropdownMenu.startAnimation(slideOut);
                     slideOut.setAnimationListener(new Animation.AnimationListener() {
@@ -132,13 +140,44 @@ public class BrowseActivity extends AppCompatActivity {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             dropdownMenu.setVisibility(View.GONE);
-                            recyclerView.setVisibility(View.VISIBLE);
+                            dropdownMenu.clearAnimation();
+                            if (search_state == "markers") {
+                                recyclerView.setVisibility(View.VISIBLE);
+                                recyclerView.startAnimation(slideIn);
+                            }
                         }
 
                         @Override
                         public void onAnimationRepeat(Animation animation) {}
                     });
                 }
+            }
+        });
+
+        Button usersBTN = findViewById(R.id.usersFilterBTN);
+        Button markersBTN = findViewById(R.id.markersFilterBTN);
+        Button userFilterBTN = findViewById(R.id.usersFilterBTN);
+        userFilterBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchButton.setVisibility(View.GONE);
+                textPrev.setText("Users");
+
+                usersBTN.setVisibility(View.GONE);
+                markersBTN.setVisibility(View.VISIBLE);
+
+                search_state = "users";
+            }
+        });
+
+        Button markersFilterBTN = findViewById(R.id.markersFilterBTN);
+        markersFilterBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                usersBTN.setVisibility(View.VISIBLE);
+                markersFilterBTN.setVisibility(View.GONE);
+                searchButton.setVisibility(View.VISIBLE);
+                textPrev.setText("User Markers");
             }
         });
 
