@@ -1,5 +1,6 @@
 package com.example.pathfinder;
 
+import static android.widget.Toast.LENGTH_LONG;
 import static java.security.AccessController.getContext;
 
 import android.app.AlertDialog;
@@ -114,7 +115,10 @@ public class ProfileActivity extends AppCompatActivity {
         profileframe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEditDialog();
+                Toast.makeText(getApplicationContext(), "Some of important filds cannot be empty", Toast.LENGTH_SHORT).show();
+                if (profileUID == FirebaseAuth.getInstance().getUid().toString()) {
+                    showEditDialog();
+                }
             }
         });
     }

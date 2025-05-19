@@ -204,8 +204,8 @@ public class BrowseActivity extends AppCompatActivity {
         closebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(BrowseActivity.this, MainActivity.class));
-                finishAfterTransition();
+//                startActivity(new Intent(BrowseActivity.this, MainActivity.class));
+                finish();
             }
         });
     }

@@ -20,6 +20,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,31 +83,33 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
     private static boolean isMapKitInit = false;
-    private static boolean isBuilderModEnabled = false;
+    private  boolean isBuilderModEnabled = false;
 
     private FusedLocationProviderClient fusedLocationClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private double longitude = 36.215984f;
     private double latitude = 51.740429f;
 
-    private Calendar selectedCalendar = Calendar.getInstance();
+    private Timestamp selectedTimeStamp;
+
 
     private MapView mapView;
     Bundle object;
     Marker marker;
 
-    private final MapObjectTapListener placemarkTapListener = Markers.getTapListener(this);
+    private MapObjectTapListener placemarkTapListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        placemarkTapListener = Markers.getTapListener(this);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         }
 
-        if (!isMapKitInit) {
+       if (!isMapKitInit) {
             MapKitFactory.setApiKey("00f001ab-bb4f-423d-9a55-c527e58d412d");
             MapKitFactory.initialize(this);
             isMapKitInit = true;
@@ -194,18 +197,20 @@ public class MainActivity extends AppCompatActivity {
                             final Calendar calendar = Calendar.getInstance();
                             int hour = calendar.get(Calendar.HOUR_OF_DAY);
                             int minute = calendar.get(Calendar.MINUTE);
-                            int SelH;
 
 
                             TimePickerDialog timePickerDialog = new TimePickerDialog(
                                     MainActivity.this,
                                     (TimePicker view, int selectedHour, int selectedMinute) -> {
-                                        final SelH = selectedHour;
 
                                         String time = String.format("%02d:%02d", selectedHour, selectedMinute);
                                         Toast.makeText(getApplicationContext(), time, Toast.LENGTH_SHORT).show();
 //                                        timeTextView.setText("Выбранное время: " + time);
-                                        selectedCalendar = calendar;
+                                        Calendar targCal = Calendar.getInstance();
+                                        targCal.set(Calendar.HOUR_OF_DAY, selectedHour);
+                                        targCal.set(Calendar.MINUTE, selectedMinute);
+                                        selectedTimeStamp = new Timestamp(targCal.getTime());
+                                        Log.i("GFFFA", targCal.getTime().toString());
                                     },
                                     hour,
                                     minute,
@@ -214,8 +219,6 @@ public class MainActivity extends AppCompatActivity {
                             timePickerDialog.show();
                         }
                     });
-                    selectedCalendar.set(selectedCalendar.YEAR, selectedCalendar.MONTH, selectedCalendar.DAY_OF_MONTH, SelH);
-                    Timestamp timestamp = new Timestamp(selectedCalendar.getTime());
 
                     confirm.setOnClickListener(v -> {
                         if (!userInput.getText().toString().isEmpty() && !desc.getText().toString().isEmpty()) {
@@ -229,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             Markers.Push(userInput.getText().toString(), desc.getText().toString(),
-                                    FirebaseAuth.getInstance().getCurrentUser().getUid(), selectedColor, timestamp,
+                                    FirebaseAuth.getInstance().getCurrentUser().getUid(), selectedColor, selectedTimeStamp,
                                     point.getLatitude(), point.getLongitude());
                             dialog.dismiss();
                             Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude, placemarkTapListener);
