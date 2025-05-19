@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +67,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private static final int maxlenght = 22;
 
-    private static final String profileUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private static String profileUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,14 @@ public class ProfileActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
+
+        //PARSE UID FROM ACTIVITIES
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("USER_UID")) {
+            profileUID = intent.getStringExtra("USER_UID");
+
+            Log.d("TargetActivity", "Received UID: " + profileUID);
+        }
 
 //        binding = ActivityProfileBinding.inflate(getLayoutInflater());
         UserInfoFetch();

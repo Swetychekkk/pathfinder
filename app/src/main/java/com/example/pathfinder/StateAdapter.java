@@ -55,25 +55,25 @@ public class StateAdapter  extends RecyclerView.Adapter<StateAdapter.ViewHolder>
         holder.descriptionView.setText(marker.getDescription());
         Integer color = ColorUtils.blendARGB(Color.parseColor(marker.getPriority()), Color.BLACK, 0.25f); //MAKING COLOR FILTER
         holder.background.setBackgroundTintList(ColorStateList.valueOf(color)); //CHANGING BACKGROUND COLOR
-//        FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        String profileImage = snapshot.child("thumbnail").getValue().toString();
-//                        if (profileImage != null && !profileImage.isEmpty()) {
-//                            Glide.with(cont)
-//                                    .load(profileImage)
-//                                    .into(holder.picView);
-//                        }
-//
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                });
+        FirebaseDatabase.getInstance().getReference().child("Users").child(marker.getOwner())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String profileImage = snapshot.child("thumbnail").getValue().toString();
+                        if (profileImage != null && !profileImage.isEmpty()) {
+                            Glide.with(cont)
+                                    .load(profileImage)
+                                    .into(holder.picView);
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
         holder.elementLayout.setOnClickListener(new View.OnClickListener(){
             @Override

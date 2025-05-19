@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pathfinder.databinding.ActivityBrowseBinding;
 import com.example.pathfinder.databinding.ActivityRegisterBinding;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.yandex.mapkit.Image;
@@ -32,7 +33,9 @@ import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.mapview.MapView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class BrowseActivity extends AppCompatActivity {
 
@@ -226,6 +229,10 @@ public class BrowseActivity extends AppCompatActivity {
                                     Double longitude = document.getDouble("longitude");
                                     String ownerid = document.getString("ownerid");
                                     String priority = document.getString("priority");
+                                    Timestamp dest_time = (Timestamp) document.get("dest_time");
+                                    SimpleDateFormat sdf = new SimpleDateFormat("HH\nmm");
+                                    SimpleDateFormat dateform = new SimpleDateFormat("d MMM", Locale.US);
+
 
                                     Marker marker = new Marker(name, description, latitude, longitude, ownerid, priority);
 

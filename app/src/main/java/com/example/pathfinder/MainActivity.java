@@ -18,11 +18,8 @@ import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +51,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -80,6 +76,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -158,7 +155,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+            //DROP DATA TO PROFILE PAGE THRU INTENT
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            intent.putExtra("USER_UID", FirebaseAuth.getInstance().getUid().toString());
+            startActivity(intent);
         }
         });
 
@@ -194,10 +194,14 @@ public class MainActivity extends AppCompatActivity {
                             final Calendar calendar = Calendar.getInstance();
                             int hour = calendar.get(Calendar.HOUR_OF_DAY);
                             int minute = calendar.get(Calendar.MINUTE);
+                            int SelH;
+
 
                             TimePickerDialog timePickerDialog = new TimePickerDialog(
                                     MainActivity.this,
                                     (TimePicker view, int selectedHour, int selectedMinute) -> {
+                                        final SelH = selectedHour;
+
                                         String time = String.format("%02d:%02d", selectedHour, selectedMinute);
                                         Toast.makeText(getApplicationContext(), time, Toast.LENGTH_SHORT).show();
 //                                        timeTextView.setText("Выбранное время: " + time);
@@ -210,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
                             timePickerDialog.show();
                         }
                     });
+                    selectedCalendar.set(selectedCalendar.YEAR, selectedCalendar.MONTH, selectedCalendar.DAY_OF_MONTH, SelH);
                     Timestamp timestamp = new Timestamp(selectedCalendar.getTime());
 
                     confirm.setOnClickListener(v -> {
