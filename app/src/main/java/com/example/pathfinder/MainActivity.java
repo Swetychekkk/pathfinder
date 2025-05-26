@@ -83,7 +83,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
     private static boolean isMapKitInit = false;
-    private  boolean isBuilderModEnabled = false;
+    private boolean isBuilderModEnabled = false;
 
     private FusedLocationProviderClient fusedLocationClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;

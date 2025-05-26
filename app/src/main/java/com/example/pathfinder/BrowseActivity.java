@@ -113,27 +113,10 @@ public class BrowseActivity extends AppCompatActivity {
         textPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dropdownMenu.getVisibility() == View.GONE && recyclerView.getVisibility() == View.VISIBLE) {
-                    if (search_state == "markers") {
-                    recyclerView.startAnimation(slideOut);
-                    slideOut.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {}
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            recyclerView.setVisibility(View.GONE);
-                            recyclerView.clearAnimation();
-                            dropdownMenu.setVisibility(View.VISIBLE);
-                            dropdownMenu.startAnimation(slideIn);
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {}
-                    });} else {
-                        dropdownMenu.setVisibility(View.VISIBLE);
-                        dropdownMenu.startAnimation(slideIn);
-                    }
+                if (dropdownMenu.getVisibility() == View.GONE) {
+                    dropdownMenu.setVisibility(View.VISIBLE);
+                    dropdownMenu.startAnimation(slideIn);
+                    recyclerView.setVisibility(View.GONE);
                 } else {
                     dropdownMenu.startAnimation(slideOut);
                     slideOut.setAnimationListener(new Animation.AnimationListener() {
@@ -144,10 +127,7 @@ public class BrowseActivity extends AppCompatActivity {
                         public void onAnimationEnd(Animation animation) {
                             dropdownMenu.setVisibility(View.GONE);
                             dropdownMenu.clearAnimation();
-                            if (search_state == "markers") {
-                                recyclerView.setVisibility(View.VISIBLE);
-                                recyclerView.startAnimation(slideIn);
-                            }
+                            if (search_state.equals("markers")) {recyclerView.setVisibility(View.VISIBLE);}
                         }
 
                         @Override
@@ -156,6 +136,8 @@ public class BrowseActivity extends AppCompatActivity {
                 }
             }
         });
+
+
 
         Button usersBTN = findViewById(R.id.usersFilterBTN);
         Button markersBTN = findViewById(R.id.markersFilterBTN);
@@ -181,6 +163,8 @@ public class BrowseActivity extends AppCompatActivity {
                 markersFilterBTN.setVisibility(View.GONE);
                 searchButton.setVisibility(View.VISIBLE);
                 textPrev.setText("User Markers");
+
+                search_state = "markers";
             }
         });
 
