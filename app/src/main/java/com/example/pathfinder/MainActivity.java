@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, BrowseActivity.class));
-                finish();
+//                finish();
             }
         });
 
@@ -238,6 +238,8 @@ public class MainActivity extends AppCompatActivity {
                     Button confirm = dialog.findViewById(R.id.confirmbtn);
                     Button timePickerBTN = dialog.findViewById(R.id.selectTime_btn);
 
+                    selectedTimeStamp = Timestamp.now();
+
                     timePickerBTN.setOnClickListener(v -> {
                         final Calendar calendar = Calendar.getInstance();
                         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -284,8 +286,6 @@ public class MainActivity extends AppCompatActivity {
                     dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
                     dialog.getWindow().setGravity(Gravity.BOTTOM);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Builder mode disabled or activity finishing", Toast.LENGTH_SHORT).show();
                 }
             }
 

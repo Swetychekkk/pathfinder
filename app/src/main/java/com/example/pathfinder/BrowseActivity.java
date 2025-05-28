@@ -134,7 +134,6 @@ public class BrowseActivity extends AppCompatActivity {
                                 Intent intent = new Intent(BrowseActivity.this, ProfileActivity.class);
                                 intent.putExtra("USER_UID", userSnapshot.getKey());
                                 startActivity(intent);
-                                finish();
                             }
                         }
                     }
@@ -144,7 +143,7 @@ public class BrowseActivity extends AppCompatActivity {
 
                     }
                 });
-                return false;
+                return true;
             }
         });
 
@@ -228,7 +227,7 @@ public class BrowseActivity extends AppCompatActivity {
         closebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(BrowseActivity.this, MainActivity.class));
+//                startActivity(new Intent(BrowseActivity.this, MainActivity.class));
                 finish();
             }
         });

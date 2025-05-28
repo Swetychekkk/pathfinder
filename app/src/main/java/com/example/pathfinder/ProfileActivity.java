@@ -115,11 +115,9 @@ public class ProfileActivity extends AppCompatActivity {
         profileframe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Some of important filds cannot be empty", Toast.LENGTH_SHORT).show();
-//                if (profileUID == FirebaseAuth.getInstance().getUid().toString()) {
-//                    showEditDialog();
-//                }
-                showEditDialog();
+                if (profileUID.equals(FirebaseAuth.getInstance().getUid().toString())) {
+                    showEditDialog();
+                }
             }
         });
     }
