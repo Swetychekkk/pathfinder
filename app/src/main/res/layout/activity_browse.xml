@@ -95,6 +95,18 @@
     </LinearLayout>
 
 
+    <EditText
+        android:id="@+id/userSearch"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="Enter username"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:visibility="gone" />
+
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"

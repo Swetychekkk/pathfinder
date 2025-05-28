@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -26,8 +27,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pathfinder.databinding.ActivityBrowseBinding;
 import com.example.pathfinder.databinding.ActivityRegisterBinding;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.User;
 import com.yandex.mapkit.Image;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.CameraPosition;
@@ -106,9 +115,38 @@ public class BrowseActivity extends AppCompatActivity {
         LinearLayout dropdownMenu = findViewById(R.id.dropdownMenu);
         TextView textPrev = findViewById(R.id.textPrev);
         RecyclerView pointlst = findViewById(R.id.pointlist);
+        EditText UserSearchField = findViewById(R.id.userSearch);
 
         Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.dropdown_slide_in);
         Animation slideOut = AnimationUtils.loadAnimation(this, R.anim.dropdown_slide_out);
+
+        UserSearchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+
+                Query usernameQuery = userRef.orderByChild("username").equalTo(UserSearchField.getText().toString());
+                usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                                Intent intent = new Intent(BrowseActivity.this, ProfileActivity.class);
+                                intent.putExtra("USER_UID", userSnapshot.getKey());
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                return false;
+            }
+        });
 
         textPrev.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +165,7 @@ public class BrowseActivity extends AppCompatActivity {
                         public void onAnimationEnd(Animation animation) {
                             dropdownMenu.setVisibility(View.GONE);
                             dropdownMenu.clearAnimation();
-                            if (search_state.equals("markers")) {recyclerView.setVisibility(View.VISIBLE);}
+                            if (search_state.equals("markers")) {recyclerView.setVisibility(View.VISIBLE);} else if (search_state.equals("users")) {UserSearchField.setVisibility(View.VISIBLE);}
                         }
 
                         @Override
@@ -142,6 +180,7 @@ public class BrowseActivity extends AppCompatActivity {
         Button usersBTN = findViewById(R.id.usersFilterBTN);
         Button markersBTN = findViewById(R.id.markersFilterBTN);
         Button userFilterBTN = findViewById(R.id.usersFilterBTN);
+
         userFilterBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,6 +201,7 @@ public class BrowseActivity extends AppCompatActivity {
                 usersBTN.setVisibility(View.VISIBLE);
                 markersFilterBTN.setVisibility(View.GONE);
                 searchButton.setVisibility(View.VISIBLE);
+                UserSearchField.setVisibility(View.GONE);
                 textPrev.setText("User Markers");
 
                 search_state = "markers";
@@ -188,7 +228,7 @@ public class BrowseActivity extends AppCompatActivity {
         closebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                startActivity(new Intent(BrowseActivity.this, MainActivity.class));
+                startActivity(new Intent(BrowseActivity.this, MainActivity.class));
                 finish();
             }
         });

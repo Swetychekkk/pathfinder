@@ -20,12 +20,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Queue;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -44,6 +50,8 @@ public class RegisterActivity extends AppCompatActivity {
         binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+
         binding.regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,27 +69,42 @@ public class RegisterActivity extends AppCompatActivity {
                 } else if (!(binding.passwordRegEt.getText().toString().length() >= 6)) { //if password not satisfied FireBase security requirements
                     Toast.makeText(getApplicationContext(), "Password must be at least 6 symbol", Toast.LENGTH_SHORT).show();
                     binding.passwordRegEt.setTextColor(Color.parseColor("#ce3867"));
-                } else if (binding.checkBox.isChecked()) { //check if checkbox active
-                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(binding.emailRegEt.getText().toString(), binding.passwordRegEt.getText().toString())
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        HashMap<String, String> userInfo = new HashMap<>();
-                                        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-                                        userInfo.put("email", binding.emailRegEt.getText().toString());
-                                        userInfo.put("username", binding.usernameRegEt.getText().toString());
-                                        userInfo.put("thumbnail", "");
-                                        userInfo.put("joindate", sdf.format(new Date()));
-                                        FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                .setValue(userInfo);
-                                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-                                        finish();
-                                    } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                        Toast.makeText(getApplicationContext(), "User with this E-mail already exists", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
+                } else if (binding.checkBox.isChecked()) { //check if checkbox activated
+                    Query usernameQuery = userRef.orderByChild("username").equalTo(binding.usernameRegEt.getText().toString());
+
+                    usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.exists()) {
+                                FirebaseAuth.getInstance().createUserWithEmailAndPassword(binding.emailRegEt.getText().toString(), binding.passwordRegEt.getText().toString())
+                                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                                if (task.isSuccessful()) {
+                                                    HashMap<String, String> userInfo = new HashMap<>();
+                                                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
+                                                    userInfo.put("email", binding.emailRegEt.getText().toString());
+                                                    userInfo.put("username", binding.usernameRegEt.getText().toString());
+                                                    userInfo.put("thumbnail", "");
+                                                    userInfo.put("joindate", sdf.format(new Date()));
+                                                    FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .setValue(userInfo);
+                                                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                                                    finish();
+                                                } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                                    Toast.makeText(getApplicationContext(), "User with this E-mail already exists", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                            } else { Toast.makeText(getApplicationContext(), "User with selected username already exists", Toast.LENGTH_SHORT).show(); }
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 } else { //if checkbox not active
                     binding.checkBox.setTextColor(Color.parseColor("#ce3867"));
                     binding.passwordRegEt.setTextColor(Color.parseColor("#BDB0D8"));

@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     private double latitude = 51.740429f;
 
     private Timestamp selectedTimeStamp;
+    private InputListener inputListener;
 
 
     private MapView mapView;
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         placemarkTapListener = Markers.getTapListener(this);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -114,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
             MapKitFactory.initialize(this);
             isMapKitInit = true;
         }
-
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        EdgeToEdge.enable(this);
+
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -125,9 +127,11 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
-        } else {
-            getLastKnownLocation();
+                    recreate();
+           // getLastKnownLocation();
         }
+            getLastKnownLocation();
+
 
         mapView = findViewById(R.id.mapview);
         mapView.getMap().getLogo().setAlignment(new Alignment(HorizontalAlignment.LEFT, VerticalAlignment.TOP));
@@ -148,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, BrowseActivity.class));
+                finish();
             }
         });
 
@@ -177,79 +182,8 @@ public class MainActivity extends AppCompatActivity {
 //                Markers.load(MainActivity.this, mapView, getApplicationContext(), center.getLatitude(), center.getLongitude(), placemarkTapListener);
 //            }
 //        });
-
-        mapView.getMap().addInputListener(new InputListener() {
-            @Override
-            public void onMapTap(@NonNull Map map, @NonNull Point point) {
-                if (isBuilderModEnabled) {
-                    Dialog dialog = new Dialog(MainActivity.this);
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.user_input);
-
-                    EditText userInput = dialog.findViewById(R.id.userinput);
-                    EditText desc = dialog.findViewById(R.id.descriptioninput);
-                    Button confirm = dialog.findViewById(R.id.confirmbtn);
-                    Button timePickerBTN = dialog.findViewById(R.id.selectTime_btn);
-
-                    timePickerBTN.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final Calendar calendar = Calendar.getInstance();
-                            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                            int minute = calendar.get(Calendar.MINUTE);
-
-
-                            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                                    MainActivity.this,
-                                    (TimePicker view, int selectedHour, int selectedMinute) -> {
-
-                                        String time = String.format("%02d:%02d", selectedHour, selectedMinute);
-                                        Toast.makeText(getApplicationContext(), time, Toast.LENGTH_SHORT).show();
-//                                        timeTextView.setText("Выбранное время: " + time);
-                                        Calendar targCal = Calendar.getInstance();
-                                        targCal.set(Calendar.HOUR_OF_DAY, selectedHour);
-                                        targCal.set(Calendar.MINUTE, selectedMinute);
-                                        selectedTimeStamp = new Timestamp(targCal.getTime());
-                                        Log.i("GFFFA", targCal.getTime().toString());
-                                    },
-                                    hour,
-                                    minute,
-                                    true // true = 24-часовой формат, false = AM/PM
-                            );
-                            timePickerDialog.show();
-                        }
-                    });
-
-                    confirm.setOnClickListener(v -> {
-                        if (!userInput.getText().toString().isEmpty() && !desc.getText().toString().isEmpty()) {
-                            //GET RADIO GROUP ELEMENT
-                            RadioGroup colorGroup = dialog.findViewById(R.id.colorGroup);
-                            int SelectedId = colorGroup.getCheckedRadioButtonId();
-                            String selectedColor = "#451D95";
-                            if (SelectedId != -1) {
-                                RadioButton selectedColorPicker = dialog.findViewById(SelectedId);
-                                selectedColor = String.format("#%06X", (0xFFFFFF & selectedColorPicker.getButtonTintList().getDefaultColor()));
-                            }
-
-                            Markers.Push(userInput.getText().toString(), desc.getText().toString(),
-                                    FirebaseAuth.getInstance().getCurrentUser().getUid(), selectedColor, selectedTimeStamp,
-                                    point.getLatitude(), point.getLongitude());
-                            dialog.dismiss();
-                            Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude, placemarkTapListener);
-                        }
-                    });
-
-                    dialog.show();
-                    dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-                    dialog.getWindow().setGravity(Gravity.BOTTOM);
-                }
-            }
-
-            @Override
-            public void onMapLongTap(@NonNull Map map, @NonNull Point point) {}
-        });
+        initInputListener();
+        mapView.getMap().addInputListener(inputListener);
 
         ImageButton builderModToggle = findViewById(R.id.button_add);
         builderModToggle.setOnClickListener(view -> {
@@ -290,6 +224,75 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    private void initInputListener() {
+        inputListener = new InputListener() {
+            @Override
+            public void onMapTap(@NonNull Map map, @NonNull Point point) {
+                if (isBuilderModEnabled && !isFinishing() && mapView != null) {
+                    Dialog dialog = new Dialog(MainActivity.this);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.user_input);
+
+                    EditText userInput = dialog.findViewById(R.id.userinput);
+                    EditText desc = dialog.findViewById(R.id.descriptioninput);
+                    Button confirm = dialog.findViewById(R.id.confirmbtn);
+                    Button timePickerBTN = dialog.findViewById(R.id.selectTime_btn);
+
+                    timePickerBTN.setOnClickListener(v -> {
+                        final Calendar calendar = Calendar.getInstance();
+                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                        int minute = calendar.get(Calendar.MINUTE);
+
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                                MainActivity.this,
+                                (view, selectedHour, selectedMinute) -> {
+                                    String time = String.format("%02d:%02d", selectedHour, selectedMinute);
+                                    Toast.makeText(getApplicationContext(), time, Toast.LENGTH_SHORT).show();
+                                    Calendar targCal = Calendar.getInstance();
+                                    targCal.set(Calendar.HOUR_OF_DAY, selectedHour);
+                                    targCal.set(Calendar.MINUTE, selectedMinute);
+                                    selectedTimeStamp = new Timestamp(targCal.getTime());
+                                    Log.i("GFFFA", targCal.getTime().toString());
+                                },
+                                hour,
+                                minute,
+                                true
+                        );
+                        timePickerDialog.show();
+                    });
+
+                    confirm.setOnClickListener(v -> {
+                        if (!userInput.getText().toString().isEmpty() && !desc.getText().toString().isEmpty()) {
+                            RadioGroup colorGroup = dialog.findViewById(R.id.colorGroup);
+                            int selectedId = colorGroup.getCheckedRadioButtonId();
+                            String selectedColor = "#451D95";
+                            if (selectedId != -1) {
+                                RadioButton selectedColorPicker = dialog.findViewById(selectedId);
+                                selectedColor = String.format("#%06X", (0xFFFFFF & selectedColorPicker.getButtonTintList().getDefaultColor()));
+                            }
+
+                            Markers.Push(userInput.getText().toString(), desc.getText().toString(),
+                                    FirebaseAuth.getInstance().getCurrentUser().getUid(), selectedColor, selectedTimeStamp,
+                                    point.getLatitude(), point.getLongitude());
+                            dialog.dismiss();
+                            Markers.load(MainActivity.this, mapView, getApplicationContext(), latitude, longitude, placemarkTapListener);
+                        }
+                    });
+
+                    dialog.show();
+                    dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+                    dialog.getWindow().setGravity(Gravity.BOTTOM);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Builder mode disabled or activity finishing", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onMapLongTap(@NonNull Map map, @NonNull Point point) {}
+        };
+    }
 
     private void UserInfoFetch() {
         FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -314,13 +317,16 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         MapKitFactory.getInstance().onStart();
         mapView.onStart();
+        if (inputListener != null) {
+            mapView.getMap().addInputListener(inputListener);
+        }
     }
 
     @Override
     public void onStop() {
+        super.onStop();
         mapView.onStop();
         MapKitFactory.getInstance().onStop();
-        super.onStop();
     }
 
 
