@@ -94,7 +94,19 @@
         android:layout_gravity="center_horizontal"
         android:backgroundTint="@android:color/transparent"
         android:fontFamily="@font/vladivostok_bold"
-        android:text="Time picker"
+        android:text="Select time"
+        android:textColor="@color/white"
+        app:strokeColor="@color/white"
+        app:strokeWidth="1dp" />
+
+    <Button
+        android:id="@+id/openDatePicker"
+        android:layout_width="203dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@android:color/transparent"
+        android:fontFamily="@font/vladivostok_bold"
+        android:text="Select date"
         android:textColor="@color/white"
         app:strokeColor="@color/white"
         app:strokeWidth="1dp" />

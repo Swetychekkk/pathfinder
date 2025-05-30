@@ -2,6 +2,7 @@ package com.example.pathfinder;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -26,12 +27,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -77,7 +78,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -237,8 +237,32 @@ public class MainActivity extends AppCompatActivity {
                     EditText desc = dialog.findViewById(R.id.descriptioninput);
                     Button confirm = dialog.findViewById(R.id.confirmbtn);
                     Button timePickerBTN = dialog.findViewById(R.id.selectTime_btn);
+                    Button datePickBtn = dialog.findViewById(R.id.openDatePicker);
 
                     selectedTimeStamp = Timestamp.now();
+                    Calendar targCal = Calendar.getInstance();
+
+                    datePickBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final Calendar calendar = Calendar.getInstance();
+                            int year = calendar.get(Calendar.YEAR);
+                            int month = calendar.get(Calendar.MONTH); // 0-11
+                            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                                    MainActivity.this,
+                                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                                        String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
+                                        targCal.set(Calendar.MONTH, selectedMonth);
+                                        targCal.set(Calendar.DAY_OF_MONTH, selectedDay);
+                                        Toast.makeText(MainActivity.this, "Вы выбрали: " + selectedDate, Toast.LENGTH_SHORT).show();
+                                    },
+                                    year, month, day);
+
+                            datePickerDialog.show();
+                        }
+                    });
 
                     timePickerBTN.setOnClickListener(v -> {
                         final Calendar calendar = Calendar.getInstance();
@@ -250,10 +274,8 @@ public class MainActivity extends AppCompatActivity {
                                 (view, selectedHour, selectedMinute) -> {
                                     String time = String.format("%02d:%02d", selectedHour, selectedMinute);
                                     Toast.makeText(getApplicationContext(), time, Toast.LENGTH_SHORT).show();
-                                    Calendar targCal = Calendar.getInstance();
                                     targCal.set(Calendar.HOUR_OF_DAY, selectedHour);
                                     targCal.set(Calendar.MINUTE, selectedMinute);
-                                    selectedTimeStamp = new Timestamp(targCal.getTime());
                                     Log.i("GFFFA", targCal.getTime().toString());
                                 },
                                 hour,
@@ -272,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
                                 RadioButton selectedColorPicker = dialog.findViewById(selectedId);
                                 selectedColor = String.format("#%06X", (0xFFFFFF & selectedColorPicker.getButtonTintList().getDefaultColor()));
                             }
+                            selectedTimeStamp = new Timestamp(targCal.getTime());
 
                             Markers.Push(userInput.getText().toString(), desc.getText().toString(),
                                     FirebaseAuth.getInstance().getCurrentUser().getUid(), selectedColor, selectedTimeStamp,
