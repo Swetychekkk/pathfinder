@@ -50,6 +50,22 @@
 
     <Space
         android:layout_width="match_parent"
+        android:layout_height="47dp" />
+
+    <EditText
+        android:id="@+id/editTelegram"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#F6F6F6"
+        android:ems="10"
+        android:fontFamily="@font/vladivostok_bold"
+        android:hint="Link to yours telegram"
+        android:inputType="text"
+        android:textColor="@color/white"
+        android:textColorHint="#BDB0D8" />
+
+    <Space
+        android:layout_width="match_parent"
         android:layout_height="15dp" />
 
     <Button

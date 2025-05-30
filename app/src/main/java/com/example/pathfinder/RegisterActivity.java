@@ -87,6 +87,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                     userInfo.put("username", binding.usernameRegEt.getText().toString());
                                                     userInfo.put("thumbnail", "");
                                                     userInfo.put("joindate", sdf.format(new Date()));
+                                                    userInfo.put("telegram", "");
                                                     FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                             .setValue(userInfo);
                                                     startActivity(new Intent(RegisterActivity.this, MainActivity.class));

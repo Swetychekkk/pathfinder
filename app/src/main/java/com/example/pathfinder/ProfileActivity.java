@@ -5,9 +5,11 @@ import static java.security.AccessController.getContext;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -18,6 +20,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,6 +69,8 @@ public class ProfileActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     StateAdapter adapter;
 
+    private String telegramId;
+
     private static final int maxlenght = 22;
 
     private static String profileUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -86,6 +91,10 @@ public class ProfileActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("USER_UID")) {
             profileUID = intent.getStringExtra("USER_UID");
+            if (profileUID.equals(FirebaseAuth.getInstance().getUid().toString())) {
+                FrameLayout friendsLayout = findViewById(R.id.friendsLayout);
+                friendsLayout.setVisibility(View.GONE);
+            }
 
             Log.d("TargetActivity", "Received UID: " + profileUID);
         }
@@ -111,6 +120,26 @@ public class ProfileActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
 
+        ImageButton teleLink = findViewById(R.id.telegramLink);
+
+        teleLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!(telegramId.isEmpty() || telegramId == "")) {
+                try {
+                    // TRY TO OPEN USING TELEGRAM APP
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("tg://resolve?domain=" + telegramId));
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    // TELEGRAM APP FOUND ERROR
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://t.me/" + "Sanya12366"));
+                    startActivity(intent);
+                }
+            }}
+        });
+
         FrameLayout profileframe = findViewById(R.id.profileframe);
         profileframe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,6 +158,9 @@ public class ProfileActivity extends AppCompatActivity {
                         String username = snapshot.child("username").getValue().toString();
                         String profileImage = snapshot.child("thumbnail").getValue().toString();
                         String joindate = snapshot.child("joindate").getValue().toString();
+                        String telegramid = snapshot.child("telegram").getValue().toString();
+
+                        telegramId = telegramid;
 
                         //badge-set-image
                         if (snapshot.child("badge").exists() == true) {
@@ -248,6 +280,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 EditText usernameET = dialog.findViewById(R.id.editUsername);
                 EditText thumbnailET = dialog.findViewById(R.id.editThumbnail);
+                EditText telegramET = dialog.findViewById(R.id.editTelegram);
                 DatabaseReference db = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference userRef = db.child("Users").child(FirebaseAuth.getInstance().getUid());
                 if (!usernameET.getText().toString().isEmpty())
@@ -260,6 +293,12 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 if (!thumbnailET.getText().toString().isEmpty()) {
                     userRef.child("thumbnail").setValue(thumbnailET.getText().toString());
+                    dialog.dismiss();
+                    finish();
+                    startActivity(getIntent());
+                }
+                if (!telegramET.getText().toString().isEmpty()) {
+                    userRef.child("telegram").setValue(telegramET.getText().toString());
                     dialog.dismiss();
                     finish();
                     startActivity(getIntent());

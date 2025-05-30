@@ -1,6 +1,7 @@
 package com.example.pathfinder;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -26,6 +27,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
@@ -136,6 +138,9 @@ public class MainActivity extends AppCompatActivity {
         mapView = findViewById(R.id.mapview);
         mapView.getMap().getLogo().setAlignment(new Alignment(HorizontalAlignment.LEFT, VerticalAlignment.TOP));
         object =getIntent().getExtras();
+        if (8 >= Calendar.getInstance().get(Calendar.HOUR_OF_DAY) || Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 20) {
+            mapView.getMap().setNightModeEnabled(true);
+        }
         if (object!=null){
             marker= (Marker) object.getSerializable("Marker");
             mapView.getMap().move(new CameraPosition(new Point(0, 0),17.0f, 150.0f, 0.0f));
@@ -188,10 +193,14 @@ public class MainActivity extends AppCompatActivity {
         ImageButton builderModToggle = findViewById(R.id.button_add);
         builderModToggle.setOnClickListener(view -> {
             isBuilderModEnabled = !isBuilderModEnabled;
-            builderModToggle.setRotation(isBuilderModEnabled ? 45 : 0);
+            float toRotation = isBuilderModEnabled ? 45f : 0f;
+
+            ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(builderModToggle, View.ROTATION, builderModToggle.getRotation(), toRotation);
+            rotateAnimator.setDuration(300); // длительность в мс
+            rotateAnimator.setInterpolator(new DecelerateInterpolator()); // сглаживание
+            rotateAnimator.start();
         });
 
-        UserInfoFetch();
     }
 
     private void getLastKnownLocation() {
@@ -256,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
                                         String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
                                         targCal.set(Calendar.MONTH, selectedMonth);
                                         targCal.set(Calendar.DAY_OF_MONTH, selectedDay);
-                                        Toast.makeText(MainActivity.this, "Вы выбрали: " + selectedDate, Toast.LENGTH_SHORT).show();
+                                        datePickBtn.setText("Selected date: " + selectedDay + "." + selectedMonth + "." + selectedYear);
                                     },
                                     year, month, day);
 
@@ -338,6 +347,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        UserInfoFetch();
         MapKitFactory.getInstance().onStart();
         mapView.onStart();
         if (inputListener != null) {
