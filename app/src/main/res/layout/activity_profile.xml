@@ -108,6 +108,33 @@
             android:layout_height="40dp"
             android:background="@drawable/rounded_element"
             android:backgroundTint="#6C3FC5" />
+
+        <FrameLayout
+            android:id="@+id/friendInteract"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="7dp"
+                android:layout_weight="1"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/person_add" />
+
+            <TextView
+                android:id="@+id/friendStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="48dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/vladivostok_regular"
+                android:text="Add friend"
+                android:textColor="@color/white" />
+        </FrameLayout>
+
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView

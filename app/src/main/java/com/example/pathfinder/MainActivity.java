@@ -181,12 +181,6 @@ public class MainActivity extends AppCompatActivity {
             Markers.makeUserPoint(mapView, latitude, longitude, MainActivity.this);
         });
 
-//        mapView.getMap().addCameraListener((map, cameraPosition, cameraUpdateSource, finished) -> {
-//            if (finished) {
-//                Point center = cameraPosition.getTarget();
-//                Markers.load(MainActivity.this, mapView, getApplicationContext(), center.getLatitude(), center.getLongitude(), placemarkTapListener);
-//            }
-//        });
         initInputListener();
         mapView.getMap().addInputListener(inputListener);
 

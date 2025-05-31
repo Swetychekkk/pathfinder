@@ -121,6 +121,7 @@ public class ProfileActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         ImageButton teleLink = findViewById(R.id.telegramLink);
+        if (telegramId.isEmpty() || telegramId == "") {teleLink.setVisibility(View.GONE);}
 
         teleLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,11 +145,17 @@ public class ProfileActivity extends AppCompatActivity {
         profileframe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (profileUID.equals(FirebaseAuth.getInstance().getUid().toString())) {
-                    showEditDialog();
-                }
+                if (profileUID.equals(FirebaseAuth.getInstance().getUid().toString())) {showEditDialog();}
             }
         });
+        FrameLayout friendInteract = findViewById(R.id.friendInteract);
+        friendInteract.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+            }
+        });
+
     }
     private void UserInfoFetch(){
         FirebaseDatabase.getInstance().getReference().child("Users").child(profileUID)
