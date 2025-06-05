@@ -91,12 +91,12 @@ public class RegisterActivity extends AppCompatActivity {
                                                     userInfo.put("joindate", sdf.format(new Date()));
                                                     userInfo.put("telegram", "");
 
-//                                                    Map<String, Object> friendsMap = new HashMap<>();
-//                                                    Map<String, Object> placeholderFriend = new HashMap<>();
-//                                                    placeholderFriend.put("status", "accepted");
-//                                                    friendsMap.put("YbqiV8zMb5YJKf7aMiYtEdtkn4l1", placeholderFriend);
-//
-//                                                    userInfo.put("friends", friendsMap); // вложенная карта
+                                                    Map<String, Object> friendsMap = new HashMap<>();
+                                                    Map<String, Object> placeholderFriend = new HashMap<>();
+                                                    placeholderFriend.put("status", "accepted");
+                                                    friendsMap.put("YbqiV8zMb5YJKf7aMiYtEdtkn4l1", placeholderFriend);
+
+                                                    userInfo.put("friends", friendsMap); // вложенная карта
                                                     FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                             .setValue(userInfo);
                                                     startActivity(new Intent(RegisterActivity.this, MainActivity.class));

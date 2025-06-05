@@ -93,59 +93,59 @@
 
     </FrameLayout>
 
-<!--    <FrameLayout-->
-<!--        android:id="@+id/friendsLayout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginLeft="10dp"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:layout_marginRight="10dp"-->
-<!--        android:visibility="visible">-->
+    <FrameLayout
+        android:id="@+id/friendsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:visibility="visible">
 
-<!--        <View-->
-<!--            android:id="@+id/view_friends"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:background="@drawable/rounded_element"-->
-<!--            android:backgroundTint="#6C3FC5" />-->
+        <View
+            android:id="@+id/view_friends"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/rounded_element"
+            android:backgroundTint="#6C3FC5" />
 
-<!--        <FrameLayout-->
-<!--            android:id="@+id/friendInteract"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="match_parent">-->
+        <FrameLayout
+            android:id="@+id/friendInteract"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
-<!--            <ImageView-->
-<!--                android:layout_width="25dp"-->
-<!--                android:layout_height="25dp"-->
-<!--                android:layout_marginLeft="20dp"-->
-<!--                android:layout_marginTop="7dp"-->
-<!--                android:layout_weight="1"-->
-<!--                android:scaleType="fitXY"-->
-<!--                app:srcCompat="@drawable/person_add" />-->
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="7dp"
+                android:layout_weight="1"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/person_add" />
 
-<!--            <TextView-->
-<!--                android:id="@+id/friendStatus"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginLeft="48dp"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:layout_weight="1"-->
-<!--                android:fontFamily="@font/vladivostok_regular"-->
-<!--                android:text="Add friend"-->
-<!--                android:textColor="@color/white" />-->
-<!--        </FrameLayout>-->
+            <TextView
+                android:id="@+id/friendStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="48dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/vladivostok_regular"
+                android:text="Add friend"
+                android:textColor="@color/white" />
+        </FrameLayout>
 
-<!--        <TextView-->
-<!--            android:id="@+id/friendsList"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center|right"-->
-<!--            android:layout_marginRight="20dp"-->
-<!--            android:fontFamily="@font/vladivostok_bold"-->
-<!--            android:text="1 Друг"-->
-<!--            android:textColor="@color/white" />-->
+        <TextView
+            android:id="@+id/friendsList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:layout_marginRight="20dp"
+            android:fontFamily="@font/vladivostok_bold"
+            android:text="1 Друг"
+            android:textColor="@color/white" />
 
-<!--    </FrameLayout>-->
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/upointlist"
