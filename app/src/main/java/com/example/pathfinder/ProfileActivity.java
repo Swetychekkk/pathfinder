@@ -143,6 +143,16 @@ public class ProfileActivity extends AppCompatActivity {
             }}
         });
 
+        TextView friendsListButton = findViewById(R.id.friendsList);
+        friendsListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProfileActivity.this, FriendsListActivity.class);
+                intent.putExtra("USER_UID", profileUID);
+                startActivity(intent);
+            }
+        });
+
         FrameLayout friendsInteract = findViewById(R.id.friendInteract);
         friendsInteract.setOnClickListener(new View.OnClickListener() {
             @Override
