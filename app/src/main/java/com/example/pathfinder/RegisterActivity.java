@@ -31,6 +31,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -81,13 +83,20 @@ public class RegisterActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<AuthResult> task) {
                                                 if (task.isSuccessful()) {
-                                                    HashMap<String, String> userInfo = new HashMap<>();
+                                                    HashMap<String, Object> userInfo = new HashMap<>();
                                                     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
                                                     userInfo.put("email", binding.emailRegEt.getText().toString());
                                                     userInfo.put("username", binding.usernameRegEt.getText().toString());
                                                     userInfo.put("thumbnail", "");
                                                     userInfo.put("joindate", sdf.format(new Date()));
                                                     userInfo.put("telegram", "");
+
+//                                                    Map<String, Object> friendsMap = new HashMap<>();
+//                                                    Map<String, Object> placeholderFriend = new HashMap<>();
+//                                                    placeholderFriend.put("status", "accepted");
+//                                                    friendsMap.put("YbqiV8zMb5YJKf7aMiYtEdtkn4l1", placeholderFriend);
+//
+//                                                    userInfo.put("friends", friendsMap); // вложенная карта
                                                     FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                             .setValue(userInfo);
                                                     startActivity(new Intent(RegisterActivity.this, MainActivity.class));

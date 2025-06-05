@@ -60,6 +60,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -69,7 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     StateAdapter adapter;
 
-    private String telegramId;
+    String telegramId;
 
     private static final int maxlenght = 22;
 
@@ -92,14 +93,15 @@ public class ProfileActivity extends AppCompatActivity {
         if (intent != null && intent.hasExtra("USER_UID")) {
             profileUID = intent.getStringExtra("USER_UID");
             if (profileUID.equals(FirebaseAuth.getInstance().getUid().toString())) {
-                FrameLayout friendsLayout = findViewById(R.id.friendsLayout);
-                friendsLayout.setVisibility(View.GONE);
+//                FrameLayout friendsLayout = findViewById(R.id.friendInteract);
+//                friendsLayout.setVisibility(View.GONE);
             }
 
             Log.d("TargetActivity", "Received UID: " + profileUID);
         }
 
 //        binding = ActivityProfileBinding.inflate(getLayoutInflater());
+        ImageButton teleLink = findViewById(R.id.telegramLink);
         UserInfoFetch();
 
         StateAdapter.OnStateClickListener stateClickListener = new StateAdapter.OnStateClickListener() {
@@ -120,13 +122,11 @@ public class ProfileActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
 
-        ImageButton teleLink = findViewById(R.id.telegramLink);
-        if (telegramId.isEmpty() || telegramId == "") {teleLink.setVisibility(View.GONE);}
 
         teleLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!(telegramId.isEmpty() || telegramId == "")) {
+                if (!(telegramId == null || telegramId == "")) {
                 try {
                     // TRY TO OPEN USING TELEGRAM APP
                     Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -141,6 +141,31 @@ public class ProfileActivity extends AppCompatActivity {
             }}
         });
 
+//        FrameLayout friendsInteract = findViewById(R.id.friendInteract);
+//        friendsInteract.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                FirebaseDatabase.getInstance().getReference().child("Users")
+//                        .addListenerForSingleValueEvent(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                Boolean profileTarget = snapshot.child(profileUID).child("friends").hasChild(FirebaseAuth.getInstance().getUid());
+//                                Boolean profileMine = snapshot.child(FirebaseAuth.getInstance().getUid()).child("friends").hasChild(profileUID);
+//                                if (!(profileTarget && profileMine)){
+//                                    DatabaseReference friendsRef = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getUid()).child("friends").child(profileUID);
+//                                    friendsRef.child("status").setValue("pending");
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError error) {
+//
+//                            }
+//                        });
+//            }
+//        });
+//
+
         FrameLayout profileframe = findViewById(R.id.profileframe);
         profileframe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,26 +173,42 @@ public class ProfileActivity extends AppCompatActivity {
                 if (profileUID.equals(FirebaseAuth.getInstance().getUid().toString())) {showEditDialog();}
             }
         });
-        FrameLayout friendInteract = findViewById(R.id.friendInteract);
-        friendInteract.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                
-            }
-        });
+//        FrameLayout friendInteract = findViewById(R.id.friendInteract);
+//        friendInteract.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
 
     }
     private void UserInfoFetch(){
-        FirebaseDatabase.getInstance().getReference().child("Users").child(profileUID)
+        FirebaseDatabase.getInstance().getReference().child("Users")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        String username = snapshot.child("username").getValue().toString();
-                        String profileImage = snapshot.child("thumbnail").getValue().toString();
-                        String joindate = snapshot.child("joindate").getValue().toString();
-                        String telegramid = snapshot.child("telegram").getValue().toString();
+                        String username = snapshot.child(profileUID).child("username").getValue().toString();
+                        String profileImage = snapshot.child(profileUID).child("thumbnail").getValue().toString();
+                        String joindate = snapshot.child(profileUID).child("joindate").getValue().toString();
+                        telegramId = snapshot.child(profileUID).child("telegram").getValue().toString();
+                        ImageButton teleLink = findViewById(R.id.telegramLink);
+                        Log.i("DAGGER", telegramId);
+//                        TextView friendsStatus = findViewById(R.id.friendStatus);
+//                        Boolean profileTarget = snapshot.child(profileUID).child("friends").hasChild(FirebaseAuth.getInstance().getUid());
+//                        Boolean profileMine = snapshot.child(FirebaseAuth.getInstance().getUid()).child("friends").hasChild(profileUID);
+//                        if (profileUID != FirebaseAuth.getInstance().getUid()) {
+//                            if (profileTarget) {
+//                                friendsStatus.setText("Accept");
+//                            } else if (profileMine) {
+//                                friendsStatus.setText("Pending");
+//                            } else if (profileMine && profileTarget) {
+//                                friendsStatus.setText("Friend");
+//                            }
+//
+//                        }
+                            if (telegramId == null || telegramId.isEmpty()) {teleLink.setVisibility(View.GONE);}
 
-                        telegramId = telegramid;
+//                        telegramId = telegramid;
 
                         //badge-set-image
                         if (snapshot.child("badge").exists() == true) {
