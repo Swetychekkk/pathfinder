@@ -142,7 +142,7 @@
             android:layout_gravity="center|right"
             android:layout_marginRight="20dp"
             android:fontFamily="@font/vladivostok_bold"
-            android:text="1 Друг"
+            android:text="Browse friends"
             android:textColor="@color/white" />
 
     </FrameLayout>

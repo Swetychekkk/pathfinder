@@ -216,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
                                 double minLon = longitude - delta;
                                 double maxLon = longitude + delta;
                                 if ((!(marker.getCords().getLatitude() >= minLat && marker.getCords().getLatitude() <= maxLat) || !(marker.getCords().getLongitude() >= minLon && marker.getCords().getLongitude() <= maxLon))) {
-                                    Toast.makeText(getApplicationContext(), "New point loaded successfully", Toast.LENGTH_SHORT).show();
                                     Markers.load(MainActivity.this, mapView, getApplicationContext(), marker.getCords().getLatitude(), marker.getCords().getLongitude(), placemarkTapListener);
                                 }
                             }
@@ -276,7 +275,6 @@ public class MainActivity extends AppCompatActivity {
                                 MainActivity.this,
                                 (view, selectedHour, selectedMinute) -> {
                                     String time = String.format("%02d:%02d", selectedHour, selectedMinute);
-                                    Toast.makeText(getApplicationContext(), time, Toast.LENGTH_SHORT).show();
                                     targCal.set(Calendar.HOUR_OF_DAY, selectedHour);
                                     targCal.set(Calendar.MINUTE, selectedMinute);
                                     Log.i("GFFFA", targCal.getTime().toString());

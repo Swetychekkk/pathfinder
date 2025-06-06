@@ -262,7 +262,7 @@ public class BrowseActivity extends AppCompatActivity {
                                     if (searchData != null && name.toLowerCase().contains(searchData.toLowerCase())) {
                                         markers.add(marker);
                                         progressBar.setVisibility(View.GONE);
-                                    } else if (searchData != null) {
+                                    } else if (searchData == null) {
                                         Toast.makeText(getApplicationContext(), "Its empty", Toast.LENGTH_SHORT).show();
                                     } else {
                                         markers.add(marker);
